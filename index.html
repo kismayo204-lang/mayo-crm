@@ -954,17 +954,22 @@ function clearApptCustomer(){
 
 async function apptNext(){
   if(apptStep===1){
-    // Validate step 1
-    if(!selectedCustomerId && !isNewCustomer){
-      showToast('⚠️ Chọn khách hoặc tạo khách mới!');return;
+
+    // ── TRƯỜNG HỢP 1: Chưa chọn gì và form đóng → cảnh báo
+    const formOpen = document.getElementById('new-cust-form').style.display!=='none';
+    if(!selectedCustomerId && !isNewCustomer && !formOpen){
+      showToast('⚠️ Nhập SĐT/tên để tìm, hoặc nhấn ➕ Thêm khách mới');return;
     }
-    if(isNewCustomer){
+
+    // ── TRƯỜNG HỢP 2: Đang điền form khách mới
+    if(isNewCustomer || formOpen){
       const name=document.getElementById('nc-name').value.trim();
       const phone=document.getElementById('nc-phone').value.trim();
+      if(!name){showToast('⚠️ Nhập tên khách hàng!');document.getElementById('nc-name').focus();return;}
+      if(!phone){showToast('⚠️ Nhập số điện thoại!');document.getElementById('nc-phone').focus();return;}
       const pname=document.getElementById('nc-pname').value.trim();
-      if(!name||!phone){showToast('⚠️ Nhập tên và SĐT!');return;}
-      // Save new customer + pet
-      const cId=genId('c');const petId=pname?genId('p'):null;
+
+      const cId=genId('c'); const petId=pname?genId('p'):null;
       if(petId){
         const pd={id:petId,ownerId:cId,name:pname,
           type:document.getElementById('nc-ptype').value,
@@ -983,22 +988,34 @@ async function apptNext(){
         DB.pets.push(pd);
         callAPI('create','pets',{data:pd});
       }
-      const cd={id:cId,name,phone,zalo:document.getElementById('nc-zalo').value,
-        addr:document.getElementById('nc-addr').value,source:document.getElementById('nc-src').value,
-        createdAt:today(),pets:JSON.stringify(petId?[petId]:[])};
+      const cd={id:cId,name,phone,
+        zalo:document.getElementById('nc-zalo').value,
+        addr:document.getElementById('nc-addr').value,
+        source:document.getElementById('nc-src').value,
+        createdAt:today(),
+        pets:JSON.stringify(petId?[petId]:[])};
       DB.customers.push({...cd,pets:petId?[petId]:[]});
       callAPI('create','customers',{data:cd});
       selectedCustomerId=cId;
-      showToast(`✅ Đã lưu khách ${name}!`);
+      isNewCustomer=false;
+      showToast('✅ Đã lưu khách '+name+(pname?' & bé '+pname:'')+'!');
     }
-    // Load pets + customer preview for step 2
+
+    // ── TRƯỜNG HỢP 3: Đã chọn khách cũ → tiếp tục bình thường
+    if(!selectedCustomerId){showToast('⚠️ Chọn khách hoặc điền form tạo mới!');return;}
+
+    // Load pets + preview cho step 2
     loadPetsForAppt(selectedCustomerId);
     const c2=getC(selectedCustomerId);
     const pets2=DB.pets.filter(p=>pIds(selectedCustomerId).includes(p.id));
     document.getElementById('appt-step2-customer').innerHTML=`
-      <div style="background:var(--pink-ll);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+      <div style="background:var(--pink-ll);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:4px">
         <span style="font-size:20px">${pets2[0]?.type||'🐾'}</span>
-        <div><div style="font-weight:500;font-size:13px;color:var(--ink)">${c2?.name}</div><div style="font-size:11px;color:var(--muted)">📞 ${c2?.phone}</div></div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px;color:var(--ink)">${c2?.name}</div>
+          <div style="font-size:11px;color:var(--muted)">📞 ${c2?.phone}</div>
+        </div>
+        <span class="badge bg" style="font-size:10px">Đã chọn</span>
       </div>`;
     apptStep=2;
     document.getElementById('appt-step1').style.display='none';
