@@ -185,6 +185,31 @@ tr:last-child td{border-bottom:none}
 .toast{position:fixed;bottom:calc(var(--bar-h)+var(--safe-bot)+12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:white;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;max-width:calc(100vw - 40px);text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 ::-webkit-scrollbar{display:none}
+
+/* ── KANBAN PIPELINE ── */
+.kanban-wrap{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;min-height:calc(100vh - 180px)}
+.kanban-col{flex:0 0 240px;display:flex;flex-direction:column;background:var(--cream-d);border-radius:12px;overflow:hidden}
+.kanban-col-head{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.kanban-col-title{font-size:12px;font-weight:600;color:var(--ink)}
+.kanban-col-count{background:var(--white);border:0.5px solid var(--bd);border-radius:20px;font-size:11px;font-weight:600;padding:1px 7px;color:var(--ink-m)}
+.kanban-cards{flex:1;padding:8px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;min-height:80px}
+.kanban-cards.drag-over{background:var(--pink-ll);border-radius:8px}
+.kcard{background:var(--white);border:1px solid var(--bd);border-radius:10px;padding:11px 12px;cursor:grab;user-select:none;transition:box-shadow .15s,transform .15s}
+.kcard:active{cursor:grabbing}
+.kcard.dragging{opacity:.4;transform:scale(.97)}
+.kcard-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kcard-pet{font-size:11px;color:var(--muted);margin-bottom:6px}
+.kcard-meta{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.kcard-days{font-size:10px;padding:2px 6px;border-radius:6px;font-weight:500}
+.kcard-score{font-size:11px;font-weight:600}
+.kcard-actions{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--bd)}
+.kcard-btn{flex:1;padding:5px;border:0.5px solid var(--bd);border-radius:7px;background:transparent;font-size:11px;color:var(--ink-m);cursor:pointer;text-align:center;font-family:inherit}
+.kcard-btn:active{background:var(--pink-ll)}
+.pipeline-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.pipeline-stats{display:flex;gap:8px;flex-wrap:wrap}
+.pstat{background:var(--white);border:0.5px solid var(--bd);border-radius:8px;padding:6px 10px;text-align:center;min-width:70px}
+.pstat-val{font-size:16px;font-weight:600;color:var(--ink);display:block}
+.pstat-label{font-size:10px;color:var(--muted);display:block}
 </style>
 </head>
 <body>
@@ -326,6 +351,23 @@ tr:last-child td{border-bottom:none}
 
 </div><!-- /scroll-area -->
 
+
+<!-- PIPELINE KANBAN -->
+<div id="p-pipeline" class="panel">
+  <div class="pipeline-header">
+    <div>
+      <div class="page-title">Pipeline chăm sóc</div>
+      <div class="page-sub">Kéo thẻ sang cột tiếp theo để cập nhật giai đoạn</div>
+    </div>
+    <div class="pipeline-stats">
+      <div class="pstat"><span class="pstat-val" id="ps-total">0</span><span class="pstat-label">Đang theo dõi</span></div>
+      <div class="pstat"><span class="pstat-val" id="ps-hot" style="color:var(--r-tx)">0</span><span class="pstat-label">Cần gấp</span></div>
+      <div class="pstat"><span class="pstat-val" id="ps-won" style="color:var(--g-tx)">0</span><span class="pstat-label">VIP tháng này</span></div>
+    </div>
+  </div>
+  <div class="kanban-wrap" id="kanban-board"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottomnav">
   <button class="bnav active" id="bn-dashboard" onclick="goPanel('dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Tổng quan</span></button>
@@ -334,6 +376,7 @@ tr:last-child td{border-bottom:none}
     <span class="bnav-icon">✂️</span><span class="bnav-label">Lịch</span>
     <span class="bnav-badge" id="bn-badge">0</span>
   </button>
+  <button class="bnav" id="bn-pipeline" onclick="goPanel('pipeline')"><span class="bnav-icon">📋</span><span class="bnav-label">Pipeline</span></button>
   <button class="bnav" id="bn-reminders" onclick="goPanel('reminders')"><span class="bnav-icon">🔔</span><span class="bnav-label">Nhắc</span></button>
   <button class="bnav" id="bn-more" onclick="toggleMore()"><span class="bnav-icon">⋯</span><span class="bnav-label">Thêm</span></button>
 </div>
@@ -666,12 +709,17 @@ async function callAPI(action,sheet,body={}){
 async function syncAll(){
   setSync('loading');
   try{
-    const [c,p,a,m]=await Promise.all([
+    const [c,p,a,m,pl]=await Promise.all([
       callAPI('getAll','customers'),callAPI('getAll','pets'),
-      callAPI('getAll','appointments'),callAPI('getAll','memberships')
+      callAPI('getAll','appointments'),callAPI('getAll','memberships'),
+      callAPI('getAll','pipeline')
     ]);
     if(c===null) throw new Error('');
     DB.customers=c||[];DB.pets=p||[];DB.appointments=a||[];DB.memberships=m||[];
+    // Merge pipeline data từ sheet (ưu tiên sheet để đồng bộ đa thiết bị)
+    if(pl&&pl.length&&pl[0].stages){
+      try{ localStorage.setItem('mayo_pipeline',pl[0].stages); }catch(e){}
+    }
     setSync('ok'); renderPanel(currentPanel); checkReminders();
   }catch(e){setSync('err');}
 }
@@ -758,7 +806,7 @@ function checkReminders(){
 }
 
 // ── NAV ──────────────────────────────────────────────
-const BN_MAP={dashboard:'bn-dashboard',customers:'bn-customers',appointments:'bn-appointments',reminders:'bn-reminders'};
+const BN_MAP={dashboard:'bn-dashboard',customers:'bn-customers',appointments:'bn-appointments',reminders:'bn-reminders',pipeline:'bn-pipeline'};
 function goPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('p-'+id).classList.add('active');
@@ -770,7 +818,7 @@ function goPanel(id){
 function renderPanel(id){
   const map={dashboard:renderDashboard,customers:renderCustomers,pets:renderPets,
     appointments:renderAppointments,reminders:renderReminders,
-    followup:renderFollowup,membership:renderMembership,revenue:renderRevenue};
+    followup:renderFollowup,membership:renderMembership,revenue:renderRevenue,pipeline:renderPipeline};
   map[id]?.();
 }
 function toggleMore(){const m=document.getElementById('more-menu'),o=document.getElementById('more-overlay'),s=m.style.display==='none';m.style.display=s?'block':'none';o.style.display=s?'block':'none';}
@@ -1501,6 +1549,212 @@ function openDetail(cId){
         ${sbadge(a.status)}</div>`).join('')}`:''}`;
   openModal('m-detail');
 }
+
+// ══════════════════════════════════════════════════════
+// PIPELINE KANBAN
+// ══════════════════════════════════════════════════════
+const STAGES = [
+  { id:'new',       label:'Khách mới',      icon:'✨', color:'var(--b-bg)',  border:'var(--b-tx)' },
+  { id:'contacted', label:'Đã liên hệ',     icon:'📞', color:'var(--a-bg)',  border:'var(--a-tx)' },
+  { id:'regular',   label:'Khách đều',      icon:'💚', color:'var(--g-bg)',  border:'var(--g-tx)' },
+  { id:'vip',       label:'Khách VIP',      icon:'⭐', color:'#FEF9ED',      border:'#8A6800'     },
+  { id:'inactive',  label:'Cần kéo lại',    icon:'🔁', color:'var(--r-bg)',  border:'var(--r-tx)' },
+];
+
+// Tính điểm tự động dựa trên lịch sử
+function calcScore(cId) {
+  const done = DB.appointments.filter(a => a.customerId == cId && a.status === 'done');
+  const last  = done.sort((a,b) => b.date?.localeCompare(a.date))[0];
+  const days  = last ? dSince(last.date) : 999;
+  const total = done.reduce((s,a) => s + Number(a.price||0), 0);
+  let score = 0;
+  score += Math.min(done.length * 10, 50);          // Số lần spa (max 50)
+  score += total > 2000000 ? 30 : total > 500000 ? 15 : 0; // Doanh thu
+  score -= days > 60 ? 30 : days > 35 ? 15 : 0;    // Thời gian không đến
+  const member = DB.memberships.find(m => m.customerId == cId && m.status === 'active');
+  if (member) score += 20;                           // Có thẻ tháng
+  return Math.max(0, Math.min(100, score));
+}
+
+// Lấy stage từ pipeline data (lưu trên Google Sheets hoặc localStorage)
+function getPipelineData() {
+  try { return JSON.parse(localStorage.getItem('mayo_pipeline') || '{}'); } catch { return {}; }
+}
+function savePipelineData(data) {
+  localStorage.setItem('mayo_pipeline', JSON.stringify(data));
+  // Sync lên Google Sheets — update nếu đã có, create nếu chưa
+  if (API) {
+    callAPI('update','pipeline',{id:'pipeline_v1',updates:{stages:JSON.stringify(data),updatedAt:today()}})
+      .then(ok=>{ if(!ok) callAPI('create','pipeline',{data:{id:'pipeline_v1',stages:JSON.stringify(data),updatedAt:today()}}); })
+      .catch(()=>{});
+  }
+}
+
+function getCustomerStage(cId, pipeline) {
+  if (pipeline[cId]) return pipeline[cId];
+  // Tự động phân loại ban đầu
+  const score = calcScore(cId);
+  const done  = DB.appointments.filter(a => a.customerId == cId && a.status === 'done');
+  const last  = done.sort((a,b) => b.date?.localeCompare(a.date))[0];
+  const days  = last ? dSince(last.date) : 999;
+  if (done.length === 0) return 'new';
+  if (days > 60) return 'inactive';
+  if (score >= 70) return 'vip';
+  if (done.length >= 3) return 'regular';
+  return 'contacted';
+}
+
+let dragSrc = null;
+
+function renderPipeline() {
+  const board = document.getElementById('kanban-board');
+  const pipeline = getPipelineData();
+
+  // Group customers by stage
+  const groups = {};
+  STAGES.forEach(s => groups[s.id] = []);
+
+  DB.customers.forEach(c => {
+    const stage = getCustomerStage(c.id, pipeline);
+    const key = groups[stage] ? stage : 'new';
+    const pets = DB.pets.filter(p => pIds(c.id).includes(p.id));
+    const done = DB.appointments.filter(a => a.customerId == c.id && a.status === 'done');
+    const last = done.sort((a,b) => b.date?.localeCompare(a.date))[0];
+    const days = last ? dSince(last.date) : null;
+    const score = calcScore(c.id);
+    groups[key].push({ c, pets, done, last, days, score });
+  });
+
+  // Stats
+  const hot = Object.values(groups).flat().filter(x => x.days !== null && x.days > 35).length;
+  const won = (groups['vip']||[]).length;
+  document.getElementById('ps-total').textContent = DB.customers.length;
+  document.getElementById('ps-hot').textContent = hot;
+  document.getElementById('ps-won').textContent = won;
+
+  // Render columns
+  board.innerHTML = STAGES.map(stage => {
+    const cards = groups[stage.id] || [];
+    const cardsHtml = cards.map(({c, pets, done, last, days, score}) => {
+      const daysLabel = days === null ? 'Chưa spa' : days === 0 ? 'Hôm nay' : days + ' ngày trước';
+      const daysColor = days === null ? 'var(--muted)' :
+                        days > 60  ? 'var(--r-tx)'  :
+                        days > 30  ? 'var(--a-tx)'  : 'var(--g-tx)';
+      const daysBg = days === null ? 'var(--cream-d)' :
+                     days > 60  ? 'var(--r-bg)'  :
+                     days > 30  ? 'var(--a-bg)'  : 'var(--g-bg)';
+      const scoreColor = score >= 70 ? 'var(--g-tx)' : score >= 40 ? 'var(--a-tx)' : 'var(--r-tx)';
+      return `<div class="kcard" draggable="true"
+          data-cid="${c.id}" data-stage="${stage.id}"
+          ondragstart="kDragStart(event)"
+          ondragend="kDragEnd(event)"
+          onclick="openDetail('${c.id}')">
+        <div class="kcard-name">${pets[0]?.type||'🐾'} ${c.name}</div>
+        <div class="kcard-pet">${pets.map(p=>p.name+'('+p.weight+'kg)').join(' · ')||'Chưa có bé'}</div>
+        <div class="kcard-meta">
+          <span class="kcard-days" style="background:${daysBg};color:${daysColor}">${daysLabel}</span>
+          <span class="kcard-score" style="color:${scoreColor}">●${score}</span>
+        </div>
+        <div class="kcard-actions">
+          <button class="kcard-btn" onclick="event.stopPropagation();quickBook('${c.id}')">📅 Đặt lịch</button>
+          <button class="kcard-btn" onclick="event.stopPropagation();quickZalo('${c.id}','${stage.id}')">💬 Zalo</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="kanban-col">
+      <div class="kanban-col-head" style="background:${stage.color};border-bottom-color:${stage.border}20">
+        <span class="kanban-col-title">${stage.icon} ${stage.label}</span>
+        <span class="kanban-col-count">${cards.length}</span>
+      </div>
+      <div class="kanban-cards" id="col-${stage.id}"
+        ondragover="kDragOver(event)"
+        ondragenter="kDragEnter(event)"
+        ondragleave="kDragLeave(event)"
+        ondrop="kDrop(event,'${stage.id}')">
+        ${cardsHtml}
+        ${cards.length === 0 ? '<div style="text-align:center;padding:20px 0;font-size:12px;color:var(--muted)">Chưa có khách</div>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DRAG & DROP ────────────────────────────────────────
+function kDragStart(e) {
+  dragSrc = e.currentTarget;
+  dragSrc.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragSrc.dataset.cid + '|' + dragSrc.dataset.stage);
+}
+function kDragEnd(e) {
+  document.querySelectorAll('.kcard').forEach(c => c.classList.remove('dragging'));
+  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
+}
+function kDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function kDragEnter(e) { e.currentTarget.classList.add('drag-over'); }
+function kDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function kDrop(e, newStage) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const data = e.dataTransfer.getData('text/plain').split('|');
+  const cId = data[0];
+  if (!cId) return;
+  const pipeline = getPipelineData();
+  const oldStage = pipeline[cId] || 'new';
+  if (oldStage === newStage) return;
+  pipeline[cId] = newStage;
+  savePipelineData(pipeline);
+  // Thông báo
+  const c = getC(cId);
+  const stageName = STAGES.find(s=>s.id===newStage)?.label || newStage;
+  showToast('✅ ' + c?.name + ' → ' + stageName);
+  // Ghi lại như một activity
+  const act = {id:genId('act'),customerId:cId,type:'stage_change',
+    subject:'Chuyển giai đoạn Pipeline',
+    body:'Từ '+oldStage+' → '+newStage,
+    createdAt:today()};
+  if(API) callAPI('create','activities',{data:act}).catch(()=>{});
+  renderPipeline();
+}
+
+// ── QUICK ACTIONS ──────────────────────────────────────
+function quickBook(cId) {
+  selectedCustomerId = cId; isNewCustomer = false;
+  openModal('m-new-appt');
+  setTimeout(() => {
+    const c = getC(cId);
+    const pets = DB.pets.filter(p => pIds(cId).includes(p.id));
+    selectApptCustomer(cId);
+    document.getElementById('appt-step1').style.display = 'none';
+    document.getElementById('appt-step2').style.display = 'block';
+    apptStep = 2; updateStepUI();
+    loadPetsForAppt(cId);
+    const c2 = getC(cId);
+    const pets2 = DB.pets.filter(p => pIds(cId).includes(p.id));
+    document.getElementById('appt-step2-customer').innerHTML=`
+      <div style="background:var(--pink-ll);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <span style="font-size:20px">${pets2[0]?.type||'🐾'}</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px;color:var(--ink)">${c2?.name}</div>
+        <div style="font-size:11px;color:var(--muted)">📞 ${c2?.phone}</div></div>
+        <span class="badge bg" style="font-size:10px">Đã chọn</span>
+      </div>`;
+  }, 100);
+}
+
+function quickZalo(cId, stage) {
+  const c = getC(cId);
+  const pets = DB.pets.filter(p => pIds(cId).includes(p.id));
+  const petNames = pets.map(p=>p.name).join(', ') || 'bé';
+  const scripts = {
+    new:      `Chào chị ${c?.name}! Mayo Petshop muốn hỏi thăm bé ${petNames} dạo này có khỏe không ạ? 🐾 Nếu chị muốn đặt lịch spa cho bé cứ nhắn mình nhé!`,
+    contacted:`Dạ chị ${c?.name} ơi! Mayo muốn nhắc nhẹ bé ${petNames} đã lâu chưa được spa rồi 🐾 Chị có muốn đặt lịch cho bé không ạ?`,
+    regular:  `Chào chị ${c?.name}! Cảm ơn chị đã tin tưởng Mayo chăm sóc bé ${petNames} 🐾 Bé có lịch spa sắp tới chưa ạ?`,
+    vip:      `Chị ${c?.name} ơi! Mayo trân trọng sự tin tưởng của chị và bé ${petNames} 🌟 Chị có muốn đặt ưu tiên lịch spa cho bé không ạ?`,
+    inactive: `Dạ chị ${c?.name} ơi, lâu rồi không thấy bé ${petNames} ghé Mayo 🐾 Không biết bé dạo này có khỏe không? Chị có cần đặt lịch spa cho bé không ạ?`
+  };
+  copyZalo(scripts[stage] || scripts.new);
+}
+
 </script>
 </body>
 </html>
