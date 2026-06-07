@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mayo CRM">
 <meta name="theme-color" content="#C0392B">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23C0392B'/><text y='.9em' font-size='80' x='10'>🐾</text></svg>">
 <title>Mayo CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -17,109 +16,81 @@
   --ink:#2A1F1F;--ink-m:#5C4A4A;--muted:#9C8080;--bd:#E8D0D0;
   --white:#FFF;--g-bg:#EBF5EE;--g-tx:#1A6B3A;
   --a-bg:#FEF8E8;--a-tx:#8A6000;--r-bg:#FDECEA;--r-tx:#A32D2D;
-  --b-bg:#E8F0FE;--b-tx:#1A56B0;
+  --b-bg:#E8F0FE;--b-tx:#1A56B0;--pu-bg:#F3EFFE;--pu-tx:#5B21B6;
   --sh:0 1px 3px rgba(42,31,31,.07),0 2px 8px rgba(42,31,31,.05);
-  --nav-h:56px;--bar-h:60px;
+  --bar-h:60px;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bot:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--cream);color:var(--ink);font-family:'Be Vietnam Pro',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
 
-/* ── SETUP ── */
-#setup{position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
-.setup-box{background:var(--white);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;box-shadow:var(--sh);border:1px solid var(--bd)}
-.setup-logo{font-size:48px;text-align:center;margin-bottom:12px}
-.setup-title{font-size:20px;font-weight:600;color:var(--ink);text-align:center;margin-bottom:4px}
-.setup-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.6}
-.setup-steps{margin-bottom:20px}
+/* SETUP */
+#setup{position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.setup-box{background:var(--white);border-radius:20px;padding:28px 22px;width:100%;max-width:420px;box-shadow:var(--sh);border:1px solid var(--bd)}
 .ss{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--pink-ll)}
 .ss:last-child{border-bottom:none}
 .ss-n{width:22px;height:22px;border-radius:50%;background:var(--red);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .ss-t{font-size:12px;color:var(--ink-m);line-height:1.5;flex:1}
-.ss-t strong{color:var(--ink)}
-.setup-input{width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-family:'Be Vietnam Pro',sans-serif;outline:none;margin-bottom:8px;color:var(--ink)}
-.setup-input:focus{border-color:var(--rose)}
-.setup-note{font-size:11px;color:var(--muted);background:var(--pink-ll);padding:8px 10px;border-radius:8px;margin-bottom:14px;line-height:1.5}
-#setup-err{font-size:12px;color:var(--r-tx);margin-top:8px;display:none;text-align:center}
 
-/* ── APP SHELL ── */
+/* APP */
 #app{display:none;height:100%;flex-direction:column}
 #app.visible{display:flex}
 
-/* ── TOP BAR ── */
-.topbar{
-  background:var(--red);
-  padding:calc(var(--safe-top) + 10px) 16px 10px;
-  display:flex;align-items:center;gap:10px;
-  flex-shrink:0;z-index:100;
-}
-.topbar-logo{font-size:16px;font-weight:600;color:white;flex:1}
+/* TOPBAR */
+.topbar{background:var(--red);padding:calc(var(--safe-top)+10px) 16px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100}
+.topbar-logo{font-size:15px;font-weight:600;color:white;flex:1}
 .topbar-date{font-size:11px;color:rgba(255,255,255,.75)}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;transition:background .3s}
-.sync-dot.ok{background:#4ADE80}
-.sync-dot.err{background:#FCA5A5}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;cursor:pointer}
+.sync-dot.ok{background:#4ADE80}.sync-dot.err{background:#FCA5A5}
 .sync-dot.loading{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.topbar-btn{background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:white;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif}
+.notif-btn{background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#FACC15;border:1px solid var(--red);display:none}
+.notif-dot.show{display:block}
 
-/* ── SCROLL AREA ── */
-.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--bar-h) + var(--safe-bot) + 10px)}
+/* SCROLL */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--bar-h)+var(--safe-bot)+10px)}
 .panel{display:none;padding:14px}
 .panel.active{display:block}
 
-/* ── BOTTOM NAV ── */
-.bottomnav{
-  position:fixed;bottom:0;left:0;right:0;
-  padding:0 0 var(--safe-bot);
-  background:var(--white);border-top:1px solid var(--bd);
-  display:flex;z-index:100;
-  box-shadow:0 -2px 12px rgba(42,31,31,.08);
-}
-.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;cursor:pointer;gap:3px;transition:opacity .15s;min-height:var(--bar-h);border:none;background:none;font-family:'Be Vietnam Pro',sans-serif}
+/* BOTTOM NAV */
+.bottomnav{position:fixed;bottom:0;left:0;right:0;padding:0 0 var(--safe-bot);background:var(--white);border-top:1px solid var(--bd);display:flex;z-index:100;box-shadow:0 -2px 12px rgba(42,31,31,.08)}
+.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;cursor:pointer;gap:2px;min-height:var(--bar-h);border:none;background:none;font-family:'Be Vietnam Pro',sans-serif;position:relative}
 .bnav-icon{font-size:20px;line-height:1}
 .bnav-label{font-size:10px;font-weight:500;color:var(--muted)}
 .bnav.active .bnav-label{color:var(--red)}
-.bnav.active .bnav-icon{filter:none}
-.bnav-badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--red);color:white;font-size:9px;font-weight:600;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+.bnav-badge{position:absolute;top:5px;right:calc(50% - 18px);background:var(--red);color:white;font-size:9px;font-weight:600;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;display:none}
+.bnav-badge.show{display:block}
 
-/* ── COMPONENTS ── */
+/* COMPONENTS */
 .page-title{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:2px}
 .page-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
-
 .card{background:var(--white);border-radius:14px;border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden;margin-bottom:10px}
-.card-header{padding:12px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--cream)}
+.card-header{padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--cream)}
 .card-title{font-size:13px;font-weight:600;color:var(--ink)}
 .card-body{padding:12px 14px}
-
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .stat{background:var(--white);border-radius:12px;border:1px solid var(--bd);padding:12px 14px;box-shadow:var(--sh)}
-.stat.r{border-top:3px solid var(--red)}
-.stat.ro{border-top:3px solid var(--rose)}
-.stat.b{border-top:3px solid var(--blush)}
-.stat.p{border-top:3px solid var(--pink)}
+.stat.r{border-top:3px solid var(--red)}.stat.ro{border-top:3px solid var(--rose)}
+.stat.b{border-top:3px solid var(--blush)}.stat.p{border-top:3px solid var(--pink)}
 .stat-label{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .stat-val{font-size:26px;font-weight:600;color:var(--ink);line-height:1}
 .stat-sub{font-size:10px;color:var(--muted);margin-top:2px}
-
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'Be Vietnam Pro',sans-serif;transition:opacity .15s;-webkit-appearance:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'Be Vietnam Pro',sans-serif;-webkit-appearance:none}
 .btn:active{opacity:.8}
-.btn-primary{background:var(--red);color:white;width:100%}
+.btn-primary{background:var(--red);color:white}
 .btn-outline{background:transparent;border:1px solid var(--bd);color:var(--ink-m)}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
 .btn-ghost{background:transparent;color:var(--muted);padding:4px 8px}
-
+.btn-full{width:100%}
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
-.bg{background:var(--g-bg);color:var(--g-tx)}
-.ba{background:var(--a-bg);color:var(--a-tx)}
-.br{background:var(--r-bg);color:var(--r-tx)}
-.bb{background:var(--b-bg);color:var(--b-tx)}
-.bp{background:var(--pink-ll);color:var(--rose)}
-
-/* APPT ITEM */
+.bg{background:var(--g-bg);color:var(--g-tx)}.ba{background:var(--a-bg);color:var(--a-tx)}
+.br{background:var(--r-bg);color:var(--r-tx)}.bb{background:var(--b-bg);color:var(--b-tx)}
+.bp{background:var(--pink-ll);color:var(--rose)}.bpu{background:var(--pu-bg);color:var(--pu-tx)}
 .appt{background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer}
 .appt:active{background:var(--pink-ll)}
-.appt-time{font-size:13px;font-weight:600;color:var(--red);min-width:42px}
+.appt-time{font-size:13px;font-weight:600;color:var(--red);min-width:44px}
 .appt-dot{width:7px;height:7px;border-radius:50%;background:var(--a-tx);flex-shrink:0}
 .appt-dot.done{background:var(--g-tx)}
 .appt-info{flex:1;min-width:0}
@@ -127,122 +98,92 @@ html,body{height:100%;overflow:hidden;background:var(--cream);color:var(--ink);f
 .appt-owner{font-size:11px;color:var(--muted)}
 .appt-svc{font-size:11px;color:var(--rose);font-weight:500}
 .appt-price{font-size:12px;font-weight:600;color:var(--ink);flex-shrink:0}
-
-/* REMINDER */
 .ri-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--pink-ll);align-items:flex-start}
 .ri-item:last-child{border-bottom:none}
 .ri-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.ri-title{font-size:12px;font-weight:500;color:var(--ink);line-height:1.4}
-.ri-meta{font-size:11px;color:var(--muted)}
-
-/* TABLE scroll horizontal */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;min-width:500px}
-th{padding:9px 11px;text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bd);background:var(--cream-d);white-space:nowrap}
-td{padding:10px 11px;font-size:12px;color:var(--ink-m);border-bottom:1px solid var(--pink-ll);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-
-/* PET CARD */
-.pet-card{background:var(--white);border-radius:14px;border:1px solid var(--bd);overflow:hidden;margin-bottom:10px;cursor:pointer}
-.pet-card:active{background:var(--pink-ll)}
-.pet-card-head{padding:12px 14px;background:var(--pink-ll);display:flex;align-items:center;gap:10px}
-.pet-card-body{padding:11px 14px;font-size:12px;color:var(--ink-m);display:flex;flex-direction:column;gap:4px}
-
-/* CUSTOMER ROW */
 .cust-row{background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px}
 .cust-row:active{background:var(--pink-ll)}
 .cust-avatar{width:40px;height:40px;border-radius:50%;background:var(--pink-l);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.cust-name{font-weight:500;color:var(--ink);font-size:13px}
-.cust-meta{font-size:11px;color:var(--muted)}
-.cust-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-
-/* FORM */
-.form-group{margin-bottom:12px}
+.pet-card{background:var(--white);border-radius:14px;border:1px solid var(--bd);overflow:hidden;margin-bottom:10px;cursor:pointer}
+.pet-card:active{background:var(--pink-ll)}
+.pet-card-head{padding:12px 14px;background:var(--pink-ll);display:flex;align-items:center;gap:10px}
+.pet-card-body{padding:11px 14px;font-size:12px;color:var(--ink-m);display:flex;flex-direction:column;gap:5px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:400px}
+th{padding:9px 11px;text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--bd);background:var(--cream-d);white-space:nowrap}
+td{padding:10px 11px;font-size:12px;color:var(--ink-m);border-bottom:1px solid var(--pink-ll);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.form-group{margin-bottom:11px}
 .form-label{font-size:12px;font-weight:500;color:var(--ink-m);margin-bottom:5px;display:block}
-.form-input,.form-select,.form-textarea{
-  width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:10px;
-  font-size:14px;font-family:'Be Vietnam Pro',sans-serif;color:var(--ink);
-  background:var(--white);outline:none;-webkit-appearance:none;
-}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:10px;font-size:14px;font-family:'Be Vietnam Pro',sans-serif;color:var(--ink);background:var(--white);outline:none;-webkit-appearance:none}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--rose)}
-.form-textarea{resize:none;min-height:80px}
+.form-textarea{resize:none;min-height:72px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* MODAL — bottom sheet on mobile */
+.form-hint{font-size:11px;color:var(--muted);margin-top:3px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,31,31,.5);z-index:500;align-items:flex-end}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:var(--safe-bot)}
-.modal-header{padding:16px 18px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
-.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 12px;display:block}
+.modal{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-height:93vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--safe-bot)+8px)}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:10px auto 0;display:block}
+.modal-header{padding:12px 18px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
 .modal-title{font-size:16px;font-weight:600;color:var(--ink)}
 .modal-close{background:var(--cream-d);border:none;border-radius:50%;width:28px;height:28px;font-size:16px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.modal-body{padding:16px 18px}
-.modal-footer{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:8px}
-
-/* DETAIL CARD */
-.detail-hero{background:linear-gradient(135deg,var(--pink-ll),var(--cream-d));border-radius:14px;padding:16px;display:flex;gap:13px;align-items:flex-start;margin-bottom:14px;border:1px solid var(--bd)}
-.detail-avatar{width:56px;height:56px;border-radius:50%;background:var(--pink-l);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-
-.history-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--pink-ll)}
-.history-item:last-child{border-bottom:none}
-.history-date{font-size:11px;color:var(--muted);min-width:62px;padding-top:1px}
-.history-body{flex:1}
-.history-svc{font-size:12px;font-weight:500;color:var(--ink)}
-.history-detail{font-size:11px;color:var(--muted)}
-.history-price{font-size:12px;font-weight:600;color:var(--rose);flex-shrink:0}
-
-/* SECTION DIVIDER */
+.modal-body{padding:14px 18px}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;position:sticky;bottom:0;background:var(--white)}
 .sec-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;display:flex;align-items:center;gap:7px}
 .sec-title::after{content:'';flex:1;height:1px;background:var(--bd)}
-
-/* EMPTY */
-.empty{text-align:center;padding:32px 16px;color:var(--muted)}
-.empty-icon{font-size:40px;margin-bottom:10px}
-.empty-text{font-size:13px}
-
-/* LOADING */
-.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:32px;color:var(--muted);font-size:13px}
-.spinner{width:16px;height:16px;border:2px solid var(--pink-l);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* SEARCH */
 .searchbar{display:flex;gap:8px;margin-bottom:12px}
 .search-input{flex:1;padding:10px 13px 10px 36px;border:1px solid var(--bd);border-radius:10px;font-size:14px;font-family:'Be Vietnam Pro',sans-serif;outline:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239C8080' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;-webkit-appearance:none}
 .search-input:focus{border-color:var(--rose)}
-
-/* TABS */
 .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{padding:8px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
 .tab.active{color:var(--red);border-bottom-color:var(--red)}
-
-/* QUICK ACTIONS */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.qa{background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:12px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:opacity .15s}
-.qa:active{background:var(--pink-ll);opacity:.9}
-.qa-icon{font-size:22px}
-.qa-label{font-size:12px;font-weight:500;color:var(--ink-m)}
-.qa-sub{font-size:10px;color:var(--muted)}
-
-/* FOLLOW-UP CARD */
+.qa{background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:12px;display:flex;align-items:center;gap:9px;cursor:pointer}
+.qa:active{background:var(--pink-ll)}
+.qa-icon{font-size:22px}.qa-label{font-size:12px;font-weight:500;color:var(--ink-m)}.qa-sub{font-size:10px;color:var(--muted)}
 .fu-card{background:var(--white);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:10px}
 .fu-head{padding:11px 14px;border-bottom:1px solid var(--bd);background:var(--cream);display:flex;align-items:center;justify-content:space-between}
 .fu-body{padding:11px 14px}
 .fu-script{background:var(--pink-ll);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--ink-m);line-height:1.7;margin-bottom:10px}
-.fu-actions{display:flex;gap:8px}
-
-/* MEMBERSHIP */
 .mem-card{background:var(--white);border:1px solid var(--bd);border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
-.mem-info{flex:1;min-width:0}
-.mem-name{font-weight:500;color:var(--ink);font-size:13px}
-.mem-plan{font-size:11px;color:var(--muted)}
+.mem-info{flex:1;min-width:0}.mem-name{font-weight:500;color:var(--ink);font-size:13px}.mem-plan{font-size:11px;color:var(--muted)}
 .mem-progress{margin-top:6px;height:5px;background:var(--pink-ll);border-radius:3px;overflow:hidden}
-.mem-bar{height:100%;background:var(--rose);border-radius:3px;transition:width .4s}
-.mem-right{text-align:right;flex-shrink:0}
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--bar-h) + var(--safe-bot) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:white;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:all .3s;white-space:nowrap}
+.mem-bar{height:100%;background:var(--rose);border-radius:3px}
+.history-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--pink-ll)}
+.history-item:last-child{border-bottom:none}
+.history-date{font-size:11px;color:var(--muted);min-width:62px;padding-top:1px}
+.history-body{flex:1}.history-svc{font-size:12px;font-weight:500;color:var(--ink)}.history-detail{font-size:11px;color:var(--muted)}
+.history-price{font-size:12px;font-weight:600;color:var(--rose);flex-shrink:0}
+.notif-panel{position:fixed;top:calc(var(--safe-top)+56px);right:12px;width:min(340px, calc(100vw - 24px));background:var(--white);border-radius:14px;border:1px solid var(--bd);box-shadow:0 8px 32px rgba(42,31,31,.15);z-index:300;display:none;max-height:60vh;overflow-y:auto}
+.notif-panel.open{display:block}
+.notif-item{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--pink-ll);cursor:pointer}
+.notif-item:active{background:var(--pink-ll)}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:var(--pink-ll)}
+.notif-icon{font-size:18px;flex-shrink:0}
+.notif-title{font-size:12px;font-weight:500;color:var(--ink);line-height:1.4}
+.notif-time{font-size:10px;color:var(--muted)}
+/* Phone search result */
+.phone-result{background:var(--g-bg);border:1px solid var(--g-tx);border-radius:10px;padding:10px 13px;margin-bottom:10px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.phone-result:active{opacity:.8}
+.phone-result-info{flex:1}
+/* Step indicator */
+.step-indicator{display:flex;gap:6px;margin-bottom:16px;align-items:center}
+.step-dot{width:28px;height:28px;border-radius:50%;background:var(--bd);color:var(--muted);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-dot.active{background:var(--red);color:white}
+.step-dot.done{background:var(--g-bg);color:var(--g-tx)}
+.step-line{flex:1;height:2px;background:var(--bd);border-radius:1px}
+.step-line.done{background:var(--g-bg)}
+.hotel-badge{background:#7C3AED;color:white;font-size:10px;padding:2px 7px;border-radius:6px;font-weight:500}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;background:var(--cream-d);color:var(--ink-m)}
+.empty{text-align:center;padding:32px 16px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:10px}.empty-text{font-size:13px}
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:32px;color:var(--muted);font-size:13px}
+.spinner{width:16px;height:16px;border:2px solid var(--pink-l);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:calc(var(--bar-h)+var(--safe-bot)+12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:white;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;max-width:calc(100vw - 40px);text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
 ::-webkit-scrollbar{display:none}
 </style>
 </head>
@@ -251,20 +192,17 @@ tr:last-child td{border-bottom:none}
 <!-- SETUP -->
 <div id="setup">
 <div class="setup-box">
-  <div class="setup-logo">🐾</div>
-  <div class="setup-title">Mayo Pet Studio CRM</div>
-  <div class="setup-sub">Kết nối Google Sheets một lần — dùng mãi mãi trên mọi thiết bị</div>
-  <div class="setup-steps">
+  <div style="font-size:48px;text-align:center;margin-bottom:10px">🐾</div>
+  <div style="font-size:20px;font-weight:600;text-align:center;margin-bottom:4px">Mayo Pet Studio CRM</div>
+  <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px;line-height:1.6">Kết nối Google Sheets — đồng bộ mọi thiết bị</div>
+  <div style="margin-bottom:16px">
     <div class="ss"><div class="ss-n">1</div><div class="ss-t">Tạo Google Sheet mới tại <strong>sheets.new</strong> → đặt tên <strong>Mayo CRM Database</strong></div></div>
     <div class="ss"><div class="ss-n">2</div><div class="ss-t">Vào <strong>Tiện ích mở rộng → Apps Script</strong> → dán code <strong>Mayo_AppScript.js</strong> → chạy <strong>setupAllSheets</strong></div></div>
     <div class="ss"><div class="ss-n">3</div><div class="ss-t"><strong>Triển khai → Web app → Mọi người → Deploy</strong> → copy URL</div></div>
   </div>
-  <div style="margin-top:16px">
-    <label class="form-label">Dán URL Apps Script:</label>
-    <input class="setup-input" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:8px">
-    <div class="setup-note">URL bắt đầu bằng <strong>https://script.google.com/macros/s/</strong> và kết thúc bằng <strong>/exec</strong></div>
-    <button class="btn btn-primary" id="connect-btn" onclick="connectAPI()">🔌 Kết nối CRM</button>
-  </div>
+  <div class="form-group"><label class="form-label">Dán URL Apps Script:</label><input class="form-input" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec"></div>
+  <div style="font-size:11px;color:var(--muted);background:var(--pink-ll);padding:8px 10px;border-radius:8px;margin-bottom:14px;line-height:1.5">URL bắt đầu bằng <strong>https://script.google.com/macros/s/</strong> và kết thúc bằng <strong>/exec</strong></div>
+  <button class="btn btn-primary btn-full" id="connect-btn" onclick="connectAPI()">🔌 Kết nối CRM</button>
   <div id="setup-err" style="font-size:12px;color:var(--r-tx);margin-top:8px;text-align:center;display:none"></div>
 </div>
 </div>
@@ -272,14 +210,23 @@ tr:last-child td{border-bottom:none}
 <!-- APP -->
 <div id="app">
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">🐾 Mayo CRM</div>
   <div class="topbar-date" id="tbar-date"></div>
-  <div class="sync-dot loading" id="sync-dot" onclick="syncAll()" title="Đồng bộ"></div>
+  <button class="notif-btn" onclick="toggleNotif()">🔔<span class="notif-dot" id="notif-dot"></span></button>
+  <div class="sync-dot loading" id="sync-dot" onclick="syncAll()"></div>
 </div>
 
-<!-- SCROLL AREA -->
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div style="padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:13px;font-weight:600">Thông báo</span>
+    <button class="btn-ghost btn btn-sm" onclick="markAllRead()">Đánh dấu đã đọc</button>
+  </div>
+  <div id="notif-list"><div class="empty" style="padding:20px"><div class="empty-text">Chưa có thông báo</div></div></div>
+</div>
+<div id="notif-overlay" style="display:none;position:fixed;inset:0;z-index:290" onclick="closeNotif()"></div>
+
 <div class="scroll-area">
 
 <!-- DASHBOARD -->
@@ -290,21 +237,18 @@ tr:last-child td{border-bottom:none}
     <div class="stat b"><div class="stat-label">Thẻ tháng</div><div class="stat-val" id="s-cards">—</div><div class="stat-sub">đang chạy</div></div>
     <div class="stat p"><div class="stat-label">Nhắc nhở</div><div class="stat-val" id="s-remind">—</div><div class="stat-sub">cần xử lý</div></div>
   </div>
-
   <div class="qa-grid">
-    <div class="qa" onclick="openModal('m-new-cust')"><span class="qa-icon">➕</span><div><div class="qa-label">Thêm khách</div><div class="qa-sub">+ Hồ sơ thú cưng</div></div></div>
     <div class="qa" onclick="openModal('m-new-appt')"><span class="qa-icon">📅</span><div><div class="qa-label">Đặt lịch spa</div><div class="qa-sub">Booking ngay</div></div></div>
+    <div class="qa" onclick="openModal('m-new-hotel')"><span class="qa-icon">🏨</span><div><div class="qa-label">Đặt Hotel</div><div class="qa-sub">Gửi thú cưng</div></div></div>
     <div class="qa" onclick="goPanel('followup')"><span class="qa-icon">💌</span><div><div class="qa-label">Follow-up</div><div class="qa-sub">Sau spa 24h</div></div></div>
-    <div class="qa" onclick="goPanel('reminders')"><span class="qa-icon">🔔</span><div><div class="qa-label">Nhắc nhở</div><div class="qa-sub">Ngày mai</div></div></div>
+    <div class="qa" onclick="goPanel('reminders')"><span class="qa-icon">🔔</span><div><div class="qa-label">Nhắc nhở</div><div class="qa-sub">Hôm nay</div></div></div>
   </div>
-
   <div class="card">
     <div class="card-header"><span class="card-title">📅 Lịch hôm nay</span><button class="btn btn-outline btn-sm" onclick="goPanel('appointments')">Tất cả</button></div>
     <div class="card-body" id="d-appts"><div class="loading"><div class="spinner"></div>Đang tải...</div></div>
   </div>
-
   <div class="card">
-    <div class="card-header"><span class="card-title">🔔 Cần xử lý</span></div>
+    <div class="card-header"><span class="card-title">🔔 Cần xử lý ngay</span></div>
     <div class="card-body" id="d-remind"><div class="loading"><div class="spinner"></div></div></div>
   </div>
 </div>
@@ -313,8 +257,8 @@ tr:last-child td{border-bottom:none}
 <div id="p-customers" class="panel">
   <div class="page-title">Khách hàng</div>
   <div class="searchbar">
-    <input class="search-input" id="cust-q" placeholder="Tìm tên, SĐT, tên bé..." oninput="renderCustomers(this.value)">
-    <button class="btn btn-primary btn-sm" style="width:auto;flex-shrink:0" onclick="openModal('m-new-cust')">+</button>
+    <input class="search-input" id="cust-q" placeholder="Tên, SĐT, tên bé..." oninput="renderCustomers(this.value)" type="tel" inputmode="text">
+    <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="openModal('m-new-appt')">+Lịch</button>
   </div>
   <div id="cust-list"><div class="loading"><div class="spinner"></div></div></div>
 </div>
@@ -323,51 +267,47 @@ tr:last-child td{border-bottom:none}
 <div id="p-pets" class="panel">
   <div class="page-title">Hồ sơ thú cưng</div>
   <div class="searchbar">
-    <input class="search-input" id="pet-q" placeholder="Tìm tên bé, giống, chủ nhân..." oninput="renderPets(this.value)">
+    <input class="search-input" id="pet-q" placeholder="Tên bé, giống, chủ nhân..." oninput="renderPets(this.value)">
   </div>
   <div id="pet-list"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
-<!-- LỊCH SPA -->
+<!-- LỊCH SPA & HOTEL -->
 <div id="p-appointments" class="panel">
-  <div class="page-title">Lịch Spa</div>
+  <div class="page-title">Lịch Spa & Hotel</div>
   <div class="tabs">
     <div class="tab active" onclick="fAppts('all',this)">Tất cả</div>
     <div class="tab" onclick="fAppts('upcoming',this)">Sắp tới</div>
     <div class="tab" onclick="fAppts('done',this)">Hoàn thành</div>
+    <div class="tab" onclick="fAppts('hotel',this)">🏨 Hotel</div>
   </div>
   <div id="appt-list"></div>
-  <div style="padding:8px 0"><button class="btn btn-primary" onclick="openModal('m-new-appt')">+ Booking mới</button></div>
+  <div style="display:flex;gap:8px;padding:4px 0 8px">
+    <button class="btn btn-primary" style="flex:1" onclick="openModal('m-new-appt')">+ Spa</button>
+    <button class="btn btn-outline" style="flex:1" onclick="openModal('m-new-hotel')">+ Hotel 🏨</button>
+  </div>
 </div>
 
 <!-- NHẮC NHỞ -->
 <div id="p-reminders" class="panel">
   <div class="page-title">Nhắc nhở</div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">📱 Nhắc lịch ngày mai</span><span class="badge ba" id="rc1">0</span></div>
-    <div class="card-body" id="rl1"></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">💌 Follow-up 24h</span><span class="badge bb" id="rc2">0</span></div>
-    <div class="card-body" id="rl2"></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">🔁 Chưa spa 5 tuần</span><span class="badge br" id="rc3">0</span></div>
-    <div class="card-body" id="rl3"></div>
-  </div>
+  <div class="card"><div class="card-header"><span class="card-title">📱 Nhắc lịch ngày mai</span><span class="badge ba" id="rc1">0</span></div><div class="card-body" id="rl1"></div></div>
+  <div class="card"><div class="card-header"><span class="card-title">💌 Follow-up 24h</span><span class="badge bb" id="rc2">0</span></div><div class="card-body" id="rl2"></div></div>
+  <div class="card"><div class="card-header"><span class="card-title">🔁 Chưa spa 5 tuần</span><span class="badge br" id="rc3">0</span></div><div class="card-body" id="rl3"></div></div>
+  <div class="card"><div class="card-header"><span class="card-title">🏨 Hotel sắp kết thúc</span><span class="badge bpu" id="rc4">0</span></div><div class="card-body" id="rl4"></div></div>
 </div>
 
 <!-- FOLLOW-UP -->
 <div id="p-followup" class="panel">
   <div class="page-title">Chăm sóc sau spa</div>
-  <div class="page-sub">Script Zalo — nhấn Copy và gửi ngay</div>
+  <div class="page-sub">Script Zalo — copy và gửi ngay</div>
   <div id="fu-list"></div>
 </div>
 
 <!-- THẺ THÁNG -->
 <div id="p-membership" class="panel">
   <div class="page-title">Thẻ Spa Tháng</div>
-  <div style="margin-bottom:10px"><button class="btn btn-primary" onclick="openModal('m-new-member')">+ Đăng ký thẻ</button></div>
+  <div style="margin-bottom:10px"><button class="btn btn-primary btn-full" onclick="openModal('m-new-member')">+ Đăng ký thẻ</button></div>
   <div id="mem-list"></div>
 </div>
 
@@ -380,46 +320,27 @@ tr:last-child td{border-bottom:none}
     <div class="stat b"><div class="stat-label">Tuần này</div><div class="stat-val" id="rv-week">—</div></div>
     <div class="stat p"><div class="stat-label">TB/ca</div><div class="stat-val" id="rv-avg">—</div></div>
   </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">Giao dịch gần đây</span></div>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Ngày</th><th>Bé</th><th>Dịch vụ</th><th>Tiền</th></tr></thead>
-      <tbody id="rv-tbody"></tbody>
-    </table></div>
-  </div>
+  <div class="card"><div class="card-header"><span class="card-title">Giao dịch gần đây</span></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Ngày</th><th>Bé</th><th>Dịch vụ</th><th>Tiền</th></tr></thead><tbody id="rv-tbody"></tbody></table></div></div>
 </div>
 
 </div><!-- /scroll-area -->
 
 <!-- BOTTOM NAV -->
 <div class="bottomnav">
-  <button class="bnav active" id="bn-dashboard" onclick="goPanel('dashboard')">
-    <span class="bnav-icon">📊</span>
-    <span class="bnav-label">Tổng quan</span>
-  </button>
-  <button class="bnav" id="bn-customers" onclick="goPanel('customers')">
-    <span class="bnav-icon">👥</span>
-    <span class="bnav-label">Khách</span>
-  </button>
+  <button class="bnav active" id="bn-dashboard" onclick="goPanel('dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Tổng quan</span></button>
+  <button class="bnav" id="bn-customers" onclick="goPanel('customers')"><span class="bnav-icon">👥</span><span class="bnav-label">Khách</span></button>
   <button class="bnav" id="bn-appointments" onclick="goPanel('appointments')">
-    <span class="bnav-icon">✂️</span>
-    <span class="bnav-label">Lịch spa</span>
-    <span class="bnav-badge" id="bn-badge" style="display:none">0</span>
+    <span class="bnav-icon">✂️</span><span class="bnav-label">Lịch</span>
+    <span class="bnav-badge" id="bn-badge">0</span>
   </button>
-  <button class="bnav" id="bn-reminders" onclick="goPanel('reminders')">
-    <span class="bnav-icon">🔔</span>
-    <span class="bnav-label">Nhắc</span>
-  </button>
-  <button class="bnav" id="bn-more" onclick="toggleMore()">
-    <span class="bnav-icon">⋯</span>
-    <span class="bnav-label">Thêm</span>
-  </button>
+  <button class="bnav" id="bn-reminders" onclick="goPanel('reminders')"><span class="bnav-icon">🔔</span><span class="bnav-label">Nhắc</span></button>
+  <button class="bnav" id="bn-more" onclick="toggleMore()"><span class="bnav-icon">⋯</span><span class="bnav-label">Thêm</span></button>
 </div>
-
 </div><!-- /app -->
 
 <!-- MORE MENU -->
-<div id="more-menu" style="display:none;position:fixed;bottom:calc(var(--bar-h) + var(--safe-bot) + 8px);left:0;right:0;padding:0 12px;z-index:200">
+<div id="more-menu" style="display:none;position:fixed;bottom:calc(var(--bar-h)+var(--safe-bot)+8px);left:0;right:0;padding:0 12px;z-index:200">
   <div style="background:var(--white);border-radius:16px;border:1px solid var(--bd);overflow:hidden;box-shadow:0 -4px 24px rgba(42,31,31,.12)">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
       <div class="qa" style="border-radius:0;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd)" onclick="goPanel('pets');closeMore()"><span class="qa-icon">🐾</span><div><div class="qa-label">Thú cưng</div></div></div>
@@ -435,113 +356,189 @@ tr:last-child td{border-bottom:none}
 </div>
 <div id="more-overlay" style="display:none;position:fixed;inset:0;z-index:190" onclick="closeMore()"></div>
 
-<!-- MODALS -->
-<!-- Thêm khách -->
-<div class="modal-overlay" id="m-new-cust" onclick="closeOut(event,this)">
-<div class="modal">
-  <div class="modal-header">
-    <div><span class="modal-handle" style="display:block"></span><span class="modal-title">➕ Thêm khách mới</span></div>
-    <button class="modal-close" onclick="closeModal('m-new-cust')">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="sec-title">Chủ nhân</div>
-    <div class="form-group"><label class="form-label">Họ và tên *</label><input class="form-input" id="c-name" placeholder="Nguyễn Thị A"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Số điện thoại *</label><input class="form-input" id="c-phone" placeholder="0901..." type="tel"></div>
-      <div class="form-group"><label class="form-label">Zalo (khác SĐT)</label><input class="form-input" id="c-zalo" placeholder="090..."></div>
-    </div>
-    <div class="form-group"><label class="form-label">Địa chỉ</label><input class="form-input" id="c-addr" placeholder="Phường, Quận..."></div>
-    <div class="form-group"><label class="form-label">Biết Mayo qua</label>
-      <select class="form-select" id="c-src"><option>Facebook</option><option>Zalo</option><option>Người quen</option><option>Đi ngang qua</option><option>Google Maps</option><option>TikTok</option></select>
-    </div>
-    <div class="sec-title">Thú cưng</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Tên bé *</label><input class="form-input" id="p-name" placeholder="Mochi..."></div>
-      <div class="form-group"><label class="form-label">Loài</label>
-        <select class="form-select" id="p-type"><option value="🐶">🐶 Chó</option><option value="🐱">🐱 Mèo</option></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Giống</label><input class="form-input" id="p-breed" placeholder="Poodle..."></div>
-      <div class="form-group"><label class="form-label">Cân nặng (kg)</label><input class="form-input" id="p-weight" type="number" step="0.1" placeholder="3.5"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Tuổi</label><input class="form-input" id="p-age" placeholder="2 tuổi"></div>
-      <div class="form-group"><label class="form-label">Màu lông</label><input class="form-input" id="p-color" placeholder="Trắng"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Tính cách / Lưu ý groomer</label>
-      <textarea class="form-textarea" id="p-notes" placeholder="Hiền / nhát / hay cắn / dị ứng..."></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Tiêm phòng</label><input class="form-input" id="p-vax" type="date"></div>
-      <div class="form-group"><label class="form-label">Tần suất spa</label>
-        <select class="form-select" id="p-freq"><option>Hàng tuần</option><option>2 tuần 1 lần</option><option>Hàng tháng</option><option>Không đều</option></select>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline" style="flex:1" onclick="closeModal('m-new-cust')">Hủy</button>
-    <button class="btn btn-primary" style="flex:2" id="save-cust-btn" onclick="saveCustomer()">💾 Lưu</button>
-  </div>
-</div>
-</div>
-
-<!-- Đặt lịch -->
+<!-- ═══════════════════════════════════════════
+     MODAL: ĐẶT LỊCH SPA (tích hợp tạo khách mới)
+════════════════════════════════════════════ -->
 <div class="modal-overlay" id="m-new-appt" onclick="closeOut(event,this)">
 <div class="modal">
+  <span class="modal-handle"></span>
   <div class="modal-header">
-    <div><span class="modal-handle" style="display:block"></span><span class="modal-title">📅 Đặt lịch spa</span></div>
+    <span class="modal-title" id="appt-modal-title">📅 Đặt lịch Spa</span>
     <button class="modal-close" onclick="closeModal('m-new-appt')">✕</button>
   </div>
   <div class="modal-body">
-    <div class="form-group"><label class="form-label">Khách hàng *</label>
-      <select class="form-select" id="a-cust" onchange="loadPets(this.value)"><option value="">-- Chọn khách --</option></select>
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="st1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="st2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="st3">3</div>
+      <span style="font-size:11px;color:var(--muted);margin-left:6px" id="step-label">Tìm khách</span>
     </div>
-    <div class="form-group"><label class="form-label">Thú cưng *</label>
-      <select class="form-select" id="a-pet"><option value="">-- Chọn bé --</option></select>
+
+    <!-- STEP 1: Tìm / tạo khách -->
+    <div id="appt-step1">
+      <div class="form-group">
+        <label class="form-label">Tìm khách theo SĐT hoặc tên</label>
+        <input class="form-input" id="appt-search" placeholder="Nhập số điện thoại hoặc tên..." oninput="searchForAppt(this.value)" type="tel" inputmode="text">
+        <div class="form-hint">Nhập SĐT để tìm khách cũ. Không có kết quả → tạo mới</div>
+      </div>
+      <div id="appt-search-result" style="display:none"></div>
+      <div id="appt-selected-customer" style="display:none"></div>
+      <!-- New customer form (collapsed by default) -->
+      <div id="new-cust-form" style="display:none">
+        <div style="background:var(--g-bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--g-tx);font-weight:500">✨ Tạo khách hàng mới</div>
+        <div class="form-group"><label class="form-label">Họ và tên *</label><input class="form-input" id="nc-name" placeholder="Nguyễn Thị A"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">SĐT *</label><input class="form-input" id="nc-phone" placeholder="0901..." type="tel"></div>
+          <div class="form-group"><label class="form-label">Zalo</label><input class="form-input" id="nc-zalo" placeholder="090..."></div>
+        </div>
+        <div class="form-group"><label class="form-label">Địa chỉ</label><input class="form-input" id="nc-addr"></div>
+        <div class="form-group"><label class="form-label">Biết Mayo qua</label>
+          <select class="form-select" id="nc-src"><option>Facebook</option><option>Zalo</option><option>Người quen</option><option>Đi ngang</option><option>Google Maps</option><option>TikTok</option></select>
+        </div>
+        <div class="sec-title">Thú cưng</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tên bé *</label><input class="form-input" id="nc-pname"></div>
+          <div class="form-group"><label class="form-label">Loài</label>
+            <select class="form-select" id="nc-ptype"><option value="🐶">🐶 Chó</option><option value="🐱">🐱 Mèo</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Giống</label><input class="form-input" id="nc-pbreed"></div>
+          <div class="form-group"><label class="form-label">Cân nặng (kg)</label><input class="form-input" id="nc-pwt" type="number" step="0.1"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tuổi</label><input class="form-input" id="nc-page"></div>
+          <div class="form-group"><label class="form-label">Giới tính</label>
+            <select class="form-select" id="nc-pgender"><option>Đực</option><option>Cái</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Màu lông</label><input class="form-input" id="nc-pcolor"></div>
+        <div class="form-group"><label class="form-label">Tính cách / Lưu ý groomer</label>
+          <textarea class="form-textarea" id="nc-pnotes" placeholder="Hiền / nhát / hay cắn..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tiêm phòng</label><input class="form-input" id="nc-pvax" type="date"></div>
+          <div class="form-group"><label class="form-label">Tần suất spa</label>
+            <select class="form-select" id="nc-pfreq"><option>Hàng tuần</option><option>2 tuần 1 lần</option><option>Hàng tháng</option><option>Không đều</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Sở thích / Yêu thích</label>
+          <input class="form-input" id="nc-plikes" placeholder="Thích chơi bóng, thích ăn gà, thích được vuốt...">
+        </div>
+        <div class="form-group"><label class="form-label">Tình trạng sức khỏe</label>
+          <input class="form-input" id="nc-phealth" placeholder="Khỏe mạnh / Dị ứng X / Tiểu đường...">
+        </div>
+        <div class="form-group"><label class="form-label">Ghi chú đặc biệt</label>
+          <textarea class="form-textarea" id="nc-pspecial" placeholder="Thông tin quan trọng khác..."></textarea>
+        </div>
+      </div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Ngày hẹn *</label><input class="form-input" id="a-date" type="date"></div>
-      <div class="form-group"><label class="form-label">Giờ hẹn *</label>
-        <select class="form-select" id="a-time">
-          <option>07:00</option><option>07:30</option><option>08:00</option><option>08:30</option>
-          <option>09:00</option><option>09:30</option><option>10:00</option><option>10:30</option>
-          <option>11:00</option><option>13:00</option><option>13:30</option><option>14:00</option>
-          <option>14:30</option><option>15:00</option><option>15:30</option><option>16:00</option>
+
+    <!-- STEP 2: Chi tiết lịch -->
+    <div id="appt-step2" style="display:none">
+      <div class="form-group"><label class="form-label">Thú cưng</label>
+        <select class="form-select" id="a-pet"><option value="">-- Chọn bé --</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ngày hẹn *</label><input class="form-input" id="a-date" type="date"></div>
+        <div class="form-group"><label class="form-label">Giờ hẹn *</label>
+          <select class="form-select" id="a-time">
+            <option>07:00</option><option>07:30</option><option>08:00</option><option>08:30</option>
+            <option>09:00</option><option>09:30</option><option>10:00</option><option>10:30</option>
+            <option>11:00</option><option>13:00</option><option>13:30</option><option>14:00</option>
+            <option>14:30</option><option>15:00</option><option>15:30</option><option>16:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Dịch vụ *</label>
+        <select class="form-select" id="a-svc" onchange="autoPrice()">
+          <option value="Refresh" data-p="80000">Refresh — Tắm vệ sinh cơ bản</option>
+          <option value="Groom" data-p="150000">Groom — Tắm + tỉa + vệ sinh đầy đủ</option>
+          <option value="Studio Full" data-p="280000">Studio Full — Full grooming + ảnh</option>
+          <option value="Cắt móng + vệ sinh tai" data-p="25000">Cắt móng + vệ sinh tai</option>
+          <option value="Nhuộm màu Ombre" data-p="100000">Nhuộm màu Ombre</option>
         </select>
       </div>
-    </div>
-    <div class="form-group"><label class="form-label">Dịch vụ *</label>
-      <select class="form-select" id="a-svc" onchange="autoPrice()">
-        <option value="Refresh" data-p="80000">Refresh — Tắm vệ sinh cơ bản</option>
-        <option value="Groom" data-p="150000">Groom — Tắm + tỉa + vệ sinh đầy đủ</option>
-        <option value="Studio Full" data-p="280000">Studio Full — Full grooming + ảnh</option>
-        <option value="Cắt móng + vệ sinh tai" data-p="25000">Cắt móng + vệ sinh tai</option>
-        <option value="Nhuộm màu Ombre" data-p="100000">Nhuộm màu Ombre</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Giá (đ)</label><input class="form-input" id="a-price" type="number"></div>
-      <div class="form-group"><label class="form-label">Groomer</label>
-        <select class="form-select" id="a-groomer"><option>Tú (chính)</option><option>Kim hỗ trợ</option></select>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Giá (đ)</label><input class="form-input" id="a-price" type="number"></div>
+        <div class="form-group"><label class="form-label">Groomer</label>
+          <select class="form-select" id="a-groomer"><option>Tú (chính)</option><option>Kim hỗ trợ</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Ghi chú</label>
+        <textarea class="form-textarea" id="a-notes" placeholder="Yêu cầu đặc biệt, kiểu cắt..."></textarea>
       </div>
     </div>
-    <div class="form-group"><label class="form-label">Ghi chú</label>
-      <textarea class="form-textarea" id="a-notes" placeholder="Yêu cầu đặc biệt..."></textarea>
+
+    <!-- STEP 3: Xác nhận -->
+    <div id="appt-step3" style="display:none">
+      <div id="appt-confirm-box" style="background:var(--pink-ll);border-radius:12px;padding:14px;font-size:13px;line-height:1.8"></div>
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline" style="flex:1" onclick="closeModal('m-new-appt')">Hủy</button>
-    <button class="btn btn-primary" style="flex:2" id="save-appt-btn" onclick="saveAppt()">📅 Xác nhận</button>
+    <button class="btn btn-outline" style="flex:1" id="appt-btn-back" onclick="apptBack()" style="display:none">← Quay lại</button>
+    <button class="btn btn-primary" style="flex:2" id="appt-btn-next" onclick="apptNext()">Tiếp theo →</button>
   </div>
 </div>
 </div>
 
-<!-- Chi tiết khách -->
+<!-- MODAL: HOTEL -->
+<div class="modal-overlay" id="m-new-hotel" onclick="closeOut(event,this)">
+<div class="modal">
+  <span class="modal-handle"></span>
+  <div class="modal-header">
+    <span class="modal-title">🏨 Đặt Hotel thú cưng</span>
+    <button class="modal-close" onclick="closeModal('m-new-hotel')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Tìm khách *</label>
+      <input class="form-input" id="h-search" placeholder="SĐT hoặc tên khách..." oninput="searchForHotel(this.value)">
+    </div>
+    <div id="h-search-result"></div>
+    <div id="h-customer-info" style="display:none"></div>
+    <div class="form-group"><label class="form-label">Thú cưng *</label>
+      <select class="form-select" id="h-pet"><option value="">-- Chọn bé --</option></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Ngày nhận *</label><input class="form-input" id="h-checkin" type="date"></div>
+      <div class="form-group"><label class="form-label">Ngày trả *</label><input class="form-input" id="h-checkout" type="date"></div>
+    </div>
+    <!-- Giá Hotel theo cân nặng -->
+    <div style="background:var(--pu-bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--pu-tx)">
+      <div style="font-weight:600;margin-bottom:6px">🏨 Giá Hotel / ngày:</div>
+      <div>• Dưới 2kg: <strong>50.000đ</strong></div>
+      <div>• 2 – 5kg: <strong>80.000đ</strong></div>
+      <div>• 5 – 10kg: <strong>160.000đ</strong></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Cân nặng bé (kg)</label><input class="form-input" id="h-weight" type="number" step="0.1" oninput="calcHotel()" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Giá/ngày (đ)</label><input class="form-input" id="h-pricepd" readonly placeholder="Tự tính"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Số ngày</label><input class="form-input" id="h-days" readonly></div>
+      <div class="form-group"><label class="form-label">Tổng tiền (đ)</label><input class="form-input" id="h-total" readonly style="font-weight:600;color:var(--rose)"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Thức ăn mang theo</label><input class="form-input" id="h-food" placeholder="Pate Royal, hạt..."></div>
+    <div class="form-group"><label class="form-label">Ghi chú đặc biệt</label>
+      <textarea class="form-textarea" id="h-notes" placeholder="Thuốc cần uống, thói quen ngủ, sợ tiếng ồn..."></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" style="flex:1" onclick="closeModal('m-new-hotel')">Hủy</button>
+    <button class="btn btn-primary" style="flex:2" onclick="saveHotel()">🏨 Xác nhận</button>
+  </div>
+</div>
+</div>
+
+<!-- MODAL: CHI TIẾT KHÁCH -->
 <div class="modal-overlay" id="m-detail" onclick="closeOut(event,this)">
 <div class="modal" style="max-height:95vh">
+  <span class="modal-handle"></span>
   <div class="modal-header">
-    <div><span class="modal-handle" style="display:block"></span><span class="modal-title" id="detail-title">Chi tiết</span></div>
+    <span class="modal-title" id="detail-title">Chi tiết</span>
     <button class="modal-close" onclick="closeModal('m-detail')">✕</button>
   </div>
   <div class="modal-body" id="detail-body"></div>
@@ -552,17 +549,19 @@ tr:last-child td{border-bottom:none}
 </div>
 </div>
 
-<!-- Thẻ thành viên -->
+<!-- MODAL: THẺ THÁNG -->
 <div class="modal-overlay" id="m-new-member" onclick="closeOut(event,this)">
 <div class="modal">
+  <span class="modal-handle"></span>
   <div class="modal-header">
-    <div><span class="modal-handle" style="display:block"></span><span class="modal-title">🎴 Đăng ký Thẻ Tháng</span></div>
+    <span class="modal-title">🎴 Đăng ký Thẻ Tháng</span>
     <button class="modal-close" onclick="closeModal('m-new-member')">✕</button>
   </div>
   <div class="modal-body">
-    <div class="form-group"><label class="form-label">Khách hàng *</label>
-      <select class="form-select" id="m-cust"><option value="">-- Chọn --</option></select>
+    <div class="form-group"><label class="form-label">Tìm khách (SĐT/tên)</label>
+      <input class="form-input" id="mem-search" placeholder="SĐT hoặc tên..." oninput="searchForMember(this.value)">
     </div>
+    <div id="mem-search-result"></div>
     <div class="form-group"><label class="form-label">Gói thẻ *</label>
       <select class="form-select" id="m-plan" onchange="updMFee()">
         <option value="Thẻ Đều|120000|1">Thẻ Đều — 120.000đ / 1 ca</option>
@@ -582,31 +581,41 @@ tr:last-child td{border-bottom:none}
 </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════════════════
-// CONFIG & STATE
+// STATE
 // ══════════════════════════════════════════════════════
 let API=''; let DB={customers:[],pets:[],appointments:[],memberships:[]};
 let currentPanel='dashboard'; let apptFilter='all';
+let apptStep=1; let selectedCustomerId=null; let isNewCustomer=false;
+let notifications=[]; let unreadCount=0;
+let memberSelectedCustId=null;
 
-// ── API ────────────────────────────────────────────────
+// ── SERVICES ──────────────────────────────────────────
+const SERVICES=[
+  {id:'Refresh',label:'Refresh — Tắm vệ sinh cơ bản',price:80000,type:'spa'},
+  {id:'Groom',label:'Groom — Tắm + tỉa + vệ sinh đầy đủ',price:150000,type:'spa'},
+  {id:'Studio Full',label:'Studio Full — Full grooming + ảnh',price:280000,type:'spa'},
+  {id:'Cắt móng + vệ sinh tai',label:'Cắt móng + vệ sinh tai',price:25000,type:'spa'},
+  {id:'Nhuộm màu Ombre',label:'Nhuộm màu Ombre',price:100000,type:'spa'},
+  {id:'Hotel',label:'🏨 Hotel',price:0,type:'hotel'},
+];
+
+// ── API ──────────────────────────────────────────────
 async function callAPI(action,sheet,body={}){
   if(!API) return null;
   try{
     if(action==='getAll'){
       const r=await fetch(`${API}?action=getAll&sheet=${sheet}&t=${Date.now()}`);
       const j=await r.json(); return j.success?j.data:null;
-    } else {
-      const r=await fetch(API,{method:'POST',body:JSON.stringify({action,sheet,...body})});
-      const j=await r.json(); return j.success?j.data:null;
     }
-  } catch(e){ return null; }
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action,sheet,...body})});
+    const j=await r.json(); return j.success?j.data:null;
+  }catch(e){return null;}
 }
 
-// ── SYNC ──────────────────────────────────────────────
 async function syncAll(){
   setSync('loading');
   try{
@@ -615,99 +624,112 @@ async function syncAll(){
       callAPI('getAll','appointments'),callAPI('getAll','memberships')
     ]);
     if(c===null) throw new Error('');
-    DB.customers=c||[]; DB.pets=p||[];
-    DB.appointments=a||[]; DB.memberships=m||[];
-    setSync('ok'); renderPanel(currentPanel);
-  } catch(e){ setSync('err'); }
+    DB.customers=c||[];DB.pets=p||[];DB.appointments=a||[];DB.memberships=m||[];
+    setSync('ok'); renderPanel(currentPanel); checkReminders();
+  }catch(e){setSync('err');}
 }
-
-function setSync(s){
-  const d=document.getElementById('sync-dot');
-  d.className='sync-dot '+(s==='ok'?'ok':s==='err'?'err':'loading');
-}
+function setSync(s){const d=document.getElementById('sync-dot');d.className='sync-dot '+(s==='ok'?'ok':s==='err'?'err':'loading');}
 
 // ── CONNECT ──────────────────────────────────────────
 async function connectAPI(){
   const url=document.getElementById('api-url-input').value.trim();
-  const err=document.getElementById('setup-err');
-  const btn=document.getElementById('connect-btn');
-  if(!url.includes('script.google.com/macros/s/')){
-    err.style.display='block'; err.textContent='URL không hợp lệ'; return;
-  }
-  btn.disabled=true; btn.textContent='Đang kết nối...';
+  const err=document.getElementById('setup-err');const btn=document.getElementById('connect-btn');
+  if(!url.includes('script.google.com/macros/s/')){err.style.display='block';err.textContent='URL không hợp lệ';return;}
+  btn.disabled=true;btn.textContent='Đang kết nối...';
   try{
-    const r=await fetch(`${url}?action=ping`);
-    const j=await r.json();
-    if(j.success){
-      API=url; localStorage.setItem('mayo_api',url);
-      startApp();
-    } else throw new Error('');
-  } catch(e){
-    btn.disabled=false; btn.textContent='🔌 Kết nối CRM';
-    err.style.display='block'; err.textContent='Không kết nối được. Kiểm tra lại URL và quyền Deploy.';
-  }
+    const r=await fetch(`${url}?action=ping`);const j=await r.json();
+    if(j.success){API=url;localStorage.setItem('mayo_api',url);startApp();}else throw new Error('');
+  }catch(e){btn.disabled=false;btn.textContent='🔌 Kết nối CRM';err.style.display='block';err.textContent='Không kết nối được. Kiểm tra lại URL.';}
 }
 
-function disconnect(){
-  if(!confirm('Ngắt kết nối? Dữ liệu vẫn còn trên Google Sheets.')) return;
-  localStorage.removeItem('mayo_api'); location.reload();
-}
+function disconnect(){if(!confirm('Ngắt kết nối?'))return;localStorage.removeItem('mayo_api');location.reload();}
 
 function startApp(){
   document.getElementById('setup').style.display='none';
-  const app=document.getElementById('app');
-  app.classList.add('visible');
-  updateDate();
-  syncAll();
+  document.getElementById('app').classList.add('visible');
+  updateDate(); syncAll();
   setInterval(syncAll,60000);
+  setInterval(checkReminders,300000);
+  requestNotifPermission();
 }
 
-function updateDate(){
-  const now=new Date();
-  document.getElementById('tbar-date').textContent=now.toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric'});
+function updateDate(){document.getElementById('tbar-date').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric'});}
+
+if(localStorage.getItem('mayo_api')){API=localStorage.getItem('mayo_api');startApp();}
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────
+async function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default') await Notification.requestPermission();
 }
 
-if(localStorage.getItem('mayo_api')){ API=localStorage.getItem('mayo_api'); startApp(); }
+function pushNotif(title,body,tag=''){
+  // In-app
+  addNotification(title,body);
+  // Browser push
+  if(Notification.permission==='granted'){
+    new Notification('🐾 '+title,{body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23C0392B"/><text y=".9em" font-size="80">🐾</text></svg>',tag,badge:'',silent:false});
+  }
+}
 
-// ── NAV ───────────────────────────────────────────────
-const PANEL_MAP={
-  dashboard:'dashboard',customers:'customers',pets:'pets',
-  appointments:'appointments',reminders:'reminders',
-  followup:'followup',membership:'membership',revenue:'revenue'
-};
+function addNotification(title,body){
+  notifications.unshift({id:Date.now(),title,body,time:new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),read:false});
+  if(notifications.length>50) notifications=notifications.slice(0,50);
+  unreadCount++;
+  document.getElementById('notif-dot').classList.add('show');
+  renderNotifPanel();
+}
+
+function renderNotifPanel(){
+  const el=document.getElementById('notif-list');
+  el.innerHTML=notifications.length?notifications.map(n=>`
+    <div class="notif-item${n.read?'':' unread'}" onclick="markRead(${n.id})">
+      <div class="notif-icon">🔔</div>
+      <div style="flex:1"><div class="notif-title">${n.title}</div><div style="font-size:11px;color:var(--muted)">${n.body}</div></div>
+      <div class="notif-time">${n.time}</div>
+    </div>`).join('')
+    :`<div class="empty" style="padding:20px"><div class="empty-text">Chưa có thông báo</div></div>`;
+}
+
+function markRead(id){const n=notifications.find(x=>x.id===id);if(n)n.read=true;renderNotifPanel();}
+function markAllRead(){notifications.forEach(n=>n.read=true);unreadCount=0;document.getElementById('notif-dot').classList.remove('show');renderNotifPanel();}
+function toggleNotif(){const p=document.getElementById('notif-panel');const o=document.getElementById('notif-overlay');const open=!p.classList.contains('open');p.classList.toggle('open',open);o.style.display=open?'block':'none';}
+function closeNotif(){document.getElementById('notif-panel').classList.remove('open');document.getElementById('notif-overlay').style.display='none';}
+
+function checkReminders(){
+  const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);const tmrwS=tomorrow.toISOString().slice(0,10);
+  const upcomingTmrw=DB.appointments.filter(a=>a.date===tmrwS&&a.status==='upcoming');
+  upcomingTmrw.forEach(a=>{
+    const pet=getP(a.petId);const owner=getC(a.customerId);
+    pushNotif('Nhắc lịch ngày mai',`${pet?.type}${pet?.name} — ${owner?.name} lúc ${a.time}`,'remind-'+a.id);
+  });
+  // Hotel checkout tomorrow
+  DB.appointments.filter(a=>a.service==='Hotel'&&a.checkoutDate===tmrwS).forEach(a=>{
+    const pet=getP(a.petId);const owner=getC(a.customerId);
+    pushNotif('🏨 Hotel kết thúc ngày mai',`${pet?.type}${pet?.name} — ${owner?.name}`,'hotel-'+a.id);
+  });
+}
+
+// ── NAV ──────────────────────────────────────────────
 const BN_MAP={dashboard:'bn-dashboard',customers:'bn-customers',appointments:'bn-appointments',reminders:'bn-reminders'};
-
 function goPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('p-'+id).classList.add('active');
   document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active'));
   if(BN_MAP[id]) document.getElementById(BN_MAP[id]).classList.add('active');
-  currentPanel=id;
-  renderPanel(id);
-  // scroll to top
+  currentPanel=id; renderPanel(id);
   document.querySelector('.scroll-area').scrollTo(0,0);
 }
-
 function renderPanel(id){
-  const map={
-    dashboard:renderDashboard,customers:renderCustomers,pets:renderPets,
+  const map={dashboard:renderDashboard,customers:renderCustomers,pets:renderPets,
     appointments:renderAppointments,reminders:renderReminders,
-    followup:renderFollowup,membership:renderMembership,revenue:renderRevenue
-  };
+    followup:renderFollowup,membership:renderMembership,revenue:renderRevenue};
   map[id]?.();
 }
+function toggleMore(){const m=document.getElementById('more-menu'),o=document.getElementById('more-overlay'),s=m.style.display==='none';m.style.display=s?'block':'none';o.style.display=s?'block':'none';}
+function closeMore(){document.getElementById('more-menu').style.display='none';document.getElementById('more-overlay').style.display='none';}
 
-// ── MORE MENU ─────────────────────────────────────────
-function toggleMore(){
-  const m=document.getElementById('more-menu');
-  const o=document.getElementById('more-overlay');
-  const show=m.style.display==='none';
-  m.style.display=show?'block':'none';
-  o.style.display=show?'block':'none';
-}
-function closeMore(){ document.getElementById('more-menu').style.display='none'; document.getElementById('more-overlay').style.display='none'; }
-
-// ── HELPERS ───────────────────────────────────────────
+// ── HELPERS ──────────────────────────────────────────
 const fmt=n=>(Number(n)||0).toLocaleString('vi-VN')+'đ';
 const fmtD=s=>s?new Date(s).toLocaleDateString('vi-VN'):'—';
 const today=()=>new Date().toISOString().slice(0,10);
@@ -715,59 +737,350 @@ const dSince=s=>s?Math.floor((new Date()-new Date(s))/86400000):999;
 const getC=id=>DB.customers.find(c=>c.id==id);
 const getP=id=>DB.pets.find(p=>p.id==id);
 const getName=id=>getC(id)?.name||'?';
-const pIds=cId=>{ const c=getC(cId); if(!c?.pets) return []; try{return JSON.parse(c.pets)}catch{return Array.isArray(c.pets)?c.pets:[]} };
+const pIds=cId=>{const c=getC(cId);if(!c?.pets)return[];try{return JSON.parse(c.pets)}catch{return Array.isArray(c.pets)?c.pets:[]}};
+const genId=prefix=>`${prefix}${Date.now().toString(36)}`;
 
 function sbadge(s){
-  const m={'upcoming':'ba','done':'bg','cancelled':'br'};
-  const l={'upcoming':'Sắp tới','done':'Hoàn thành','cancelled':'Đã hủy'};
+  const m={'upcoming':'ba','done':'bg','cancelled':'br','hotel':'bpu'};
+  const l={'upcoming':'Sắp tới','done':'Hoàn thành','cancelled':'Đã hủy','hotel':'🏨 Hotel'};
   return `<span class="badge ${m[s]||'bp'}">${l[s]||s}</span>`;
 }
-function empty(ic,tx){ return `<div class="empty"><div class="empty-icon">${ic}</div><div class="empty-text">${tx}</div></div>`; }
+function empty(ic,tx){return`<div class="empty"><div class="empty-icon">${ic}</div><div class="empty-text">${tx}</div></div>`;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+// ── PHONE SEARCH (unified) ────────────────────────────
+function searchCustomers(q){
+  if(!q||q.length<2) return [];
+  return DB.customers.filter(c=>
+    c.phone?.includes(q)||c.name?.toLowerCase().includes(q.toLowerCase())||
+    DB.pets.filter(p=>pIds(c.id).includes(p.id)&&p.name?.toLowerCase().includes(q.toLowerCase())).length
+  );
+}
+
+function renderSearchResult(results,onSelect){
+  if(!results.length) return `<div style="background:var(--a-bg);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--a-tx);margin-bottom:10px">Không tìm thấy. Điền thông tin bên dưới để tạo mới.</div>`;
+  return results.map(c=>{
+    const pets=DB.pets.filter(p=>pIds(c.id).includes(p.id));
+    return `<div class="phone-result" onclick="${onSelect}('${c.id}')">
+      <span style="font-size:22px">${pets[0]?.type||'🐾'}</span>
+      <div class="phone-result-info">
+        <div style="font-weight:500;font-size:13px;color:var(--ink)">${c.name}</div>
+        <div style="font-size:11px;color:var(--muted)">📞 ${c.phone} · ${pets.map(p=>p.name).join(', ')||'Chưa có bé'}</div>
+      </div>
+      <span class="badge bg" style="font-size:10px">Chọn</span>
+    </div>`;
+  }).join('');
+}
+
+// ── APPT WIZARD (3 steps) ────────────────────────────
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='m-new-appt') initApptWizard();
+  if(id==='m-new-hotel'){
+    document.getElementById('h-checkin').value=today();
+    const tmrw=new Date();tmrw.setDate(tmrw.getDate()+1);
+    document.getElementById('h-checkout').value=tmrw.toISOString().slice(0,10);
+  }
+  if(id==='m-new-member'){updMFee();document.getElementById('m-start').value=today();}
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeOut(e,el){if(e.target===el)el.classList.remove('open');}
+
+function initApptWizard(){
+  apptStep=1;selectedCustomerId=null;isNewCustomer=false;
+  document.getElementById('appt-search').value='';
+  document.getElementById('appt-search-result').style.display='none';
+  document.getElementById('appt-selected-customer').style.display='none';
+  document.getElementById('new-cust-form').style.display='none';
+  document.getElementById('appt-step1').style.display='block';
+  document.getElementById('appt-step2').style.display='none';
+  document.getElementById('appt-step3').style.display='none';
+  document.getElementById('appt-btn-back').style.display='none';
+  document.getElementById('a-date').value=today();
+  autoPrice();
+  updateStepUI();
+}
+
+function updateStepUI(){
+  [1,2,3].forEach(i=>{
+    const d=document.getElementById('st'+i);
+    d.className='step-dot'+(i===apptStep?' active':i<apptStep?' done':'');
+  });
+  [1,2].forEach(i=>{
+    const l=document.getElementById('sl'+i);
+    if(l) l.className='step-line'+(i<apptStep?' done':'');
+  });
+  const labels={1:'Tìm khách',2:'Chi tiết lịch',3:'Xác nhận'};
+  document.getElementById('step-label').textContent=labels[apptStep];
+  document.getElementById('appt-btn-back').style.display=apptStep>1?'flex':'none';
+  document.getElementById('appt-btn-next').textContent=apptStep===3?'✅ Xác nhận đặt lịch':'Tiếp theo →';
+}
+
+function searchForAppt(q){
+  const el=document.getElementById('appt-search-result');
+  if(!q||q.length<2){el.style.display='none';return;}
+  const results=searchCustomers(q);
+  el.style.display='block';
+  if(results.length){
+    el.innerHTML=renderSearchResult(results,'selectApptCustomer');
+  } else {
+    el.innerHTML=`<div style="text-align:center;padding:8px 0">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Không tìm thấy khách</div>
+      <button class="btn btn-outline btn-sm" onclick="showNewCustForm('${q}')">➕ Tạo khách mới với SĐT này</button>
+    </div>`;
+  }
+}
+
+function showNewCustForm(phone=''){
+  isNewCustomer=true;selectedCustomerId=null;
+  document.getElementById('new-cust-form').style.display='block';
+  if(phone) document.getElementById('nc-phone').value=phone;
+  document.getElementById('appt-selected-customer').style.display='none';
+}
+
+function selectApptCustomer(cId){
+  selectedCustomerId=cId;isNewCustomer=false;
+  const c=getC(cId);
+  const pets=DB.pets.filter(p=>pIds(cId).includes(p.id));
+  document.getElementById('appt-selected-customer').style.display='block';
+  document.getElementById('appt-selected-customer').innerHTML=`
+    <div style="background:var(--g-bg);border-radius:10px;padding:10px 13px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:22px">${pets[0]?.type||'🐾'}</span>
+      <div style="flex:1"><div style="font-weight:500;color:var(--ink)">${c.name}</div><div style="font-size:11px;color:var(--muted)">📞 ${c.phone}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="clearApptCustomer()">✕</button>
+    </div>`;
+  document.getElementById('appt-search-result').style.display='none';
+  document.getElementById('new-cust-form').style.display='none';
+}
+
+function clearApptCustomer(){
+  selectedCustomerId=null;isNewCustomer=false;
+  document.getElementById('appt-selected-customer').style.display='none';
+  document.getElementById('appt-search').value='';
+}
+
+async function apptNext(){
+  if(apptStep===1){
+    // Validate step 1
+    if(!selectedCustomerId && !isNewCustomer){
+      showToast('⚠️ Chọn khách hoặc tạo khách mới!');return;
+    }
+    if(isNewCustomer){
+      const name=document.getElementById('nc-name').value.trim();
+      const phone=document.getElementById('nc-phone').value.trim();
+      const pname=document.getElementById('nc-pname').value.trim();
+      if(!name||!phone){showToast('⚠️ Nhập tên và SĐT!');return;}
+      // Save new customer + pet
+      const cId=genId('c');const petId=pname?genId('p'):null;
+      if(petId){
+        const pd={id:petId,ownerId:cId,name:pname,
+          type:document.getElementById('nc-ptype').value,
+          breed:document.getElementById('nc-pbreed').value,
+          age:document.getElementById('nc-page').value,
+          weight:document.getElementById('nc-pwt').value,
+          color:document.getElementById('nc-pcolor').value,
+          gender:document.getElementById('nc-pgender').value,
+          notes:document.getElementById('nc-pnotes').value,
+          vaccine:document.getElementById('nc-pvax').value,
+          freq:document.getElementById('nc-pfreq').value,
+          likes:document.getElementById('nc-plikes').value,
+          health:document.getElementById('nc-phealth').value,
+          special:document.getElementById('nc-pspecial').value,
+          createdAt:today()};
+        DB.pets.push(pd);
+        callAPI('create','pets',{data:pd});
+      }
+      const cd={id:cId,name,phone,zalo:document.getElementById('nc-zalo').value,
+        addr:document.getElementById('nc-addr').value,source:document.getElementById('nc-src').value,
+        createdAt:today(),pets:JSON.stringify(petId?[petId]:[])};
+      DB.customers.push({...cd,pets:petId?[petId]:[]});
+      callAPI('create','customers',{data:cd});
+      selectedCustomerId=cId;
+      showToast(`✅ Đã lưu khách ${name}!`);
+    }
+    // Load pets for step 2
+    loadPetsForAppt(selectedCustomerId);
+    apptStep=2;
+    document.getElementById('appt-step1').style.display='none';
+    document.getElementById('appt-step2').style.display='block';
+    updateStepUI();
+  }
+  else if(apptStep===2){
+    const date=document.getElementById('a-date').value;
+    if(!date){showToast('⚠️ Chọn ngày hẹn!');return;}
+    // Build confirm
+    const c=getC(selectedCustomerId);
+    const petId=document.getElementById('a-pet').value;
+    const pet=getP(petId);
+    const svc=document.getElementById('a-svc').value;
+    const price=document.getElementById('a-price').value;
+    const time=document.getElementById('a-time').value;
+    document.getElementById('appt-confirm-box').innerHTML=`
+      <div style="margin-bottom:8px"><strong>👤 Khách:</strong> ${c?.name} · ${c?.phone}</div>
+      <div style="margin-bottom:8px"><strong>${pet?.type||'🐾'} Bé:</strong> ${pet?.name||'Chưa chọn'}</div>
+      <div style="margin-bottom:8px"><strong>📅 Ngày:</strong> ${fmtD(date)} lúc ${time}</div>
+      <div style="margin-bottom:8px"><strong>✂️ Dịch vụ:</strong> ${svc}</div>
+      <div style="margin-bottom:8px"><strong>💰 Giá:</strong> ${fmt(price)}</div>
+      <div><strong>👩‍💼 Groomer:</strong> ${document.getElementById('a-groomer').value}</div>`;
+    apptStep=3;
+    document.getElementById('appt-step2').style.display='none';
+    document.getElementById('appt-step3').style.display='block';
+    updateStepUI();
+  }
+  else if(apptStep===3){
+    await confirmSaveAppt();
+  }
+}
+
+function apptBack(){
+  if(apptStep===2){apptStep=1;document.getElementById('appt-step2').style.display='none';document.getElementById('appt-step1').style.display='block';}
+  else if(apptStep===3){apptStep=2;document.getElementById('appt-step3').style.display='none';document.getElementById('appt-step2').style.display='block';}
+  updateStepUI();
+}
+
+function loadPetsForAppt(cId){
+  const sel=document.getElementById('a-pet');
+  const list=DB.pets.filter(p=>pIds(cId).includes(p.id));
+  sel.innerHTML='<option value="">-- Chọn bé --</option>'+list.map(p=>`<option value="${p.id}">${p.type}${p.name}</option>`).join('');
+  if(list.length===1) sel.value=list[0].id;
+}
+
+function autoPrice(){
+  const sel=document.getElementById('a-svc');
+  if(sel) document.getElementById('a-price').value=sel.options[sel.selectedIndex]?.dataset?.p||0;
+}
+
+async function confirmSaveAppt(){
+  const btn=document.getElementById('appt-btn-next');
+  btn.disabled=true;btn.textContent='Đang lưu...';
+  const date=document.getElementById('a-date').value;
+  const time=document.getElementById('a-time').value;
+  const data={id:genId('a'),customerId:selectedCustomerId,
+    petId:document.getElementById('a-pet').value,date,time,
+    service:document.getElementById('a-svc').value,
+    price:parseInt(document.getElementById('a-price').value)||0,
+    groomer:document.getElementById('a-groomer').value,
+    notes:document.getElementById('a-notes').value,
+    status:'upcoming',createdAt:today()};
+  DB.appointments.push(data);
+  await callAPI('create','appointments',{data});
+  // Notification
+  const c=getC(selectedCustomerId);const pet=getP(data.petId);
+  pushNotif('📅 Booking mới!',`${pet?.type}${pet?.name} — ${c?.name} · ${fmtD(date)} ${time}`,'new-booking');
+  btn.disabled=false;btn.textContent='✅ Xác nhận đặt lịch';
+  closeModal('m-new-appt');
+  renderDashboard();
+  showToast(`✅ Đã đặt lịch ${fmtD(date)} lúc ${time}!`);
+}
+
+// ── HOTEL ─────────────────────────────────────────────
+function hotelPrice(weight){
+  const w=parseFloat(weight)||0;
+  if(w<2) return 50000;
+  if(w<=5) return 80000;
+  return 160000;
+}
+
+function calcHotel(){
+  const w=parseFloat(document.getElementById('h-weight').value)||0;
+  const ci=document.getElementById('h-checkin').value;
+  const co=document.getElementById('h-checkout').value;
+  if(!w||!ci||!co) return;
+  const ppd=hotelPrice(w);
+  const days=Math.max(1,Math.ceil((new Date(co)-new Date(ci))/86400000));
+  document.getElementById('h-pricepd').value=fmt(ppd);
+  document.getElementById('h-days').value=days+' ngày';
+  document.getElementById('h-total').value=fmt(ppd*days);
+}
+
+// recalc when dates change
+document.addEventListener('change',function(e){
+  if(['h-checkin','h-checkout','h-weight'].includes(e.target.id)) calcHotel();
+});
+
+function searchForHotel(q){
+  const el=document.getElementById('h-search-result');
+  if(!q||q.length<2){el.innerHTML='';return;}
+  const results=searchCustomers(q);
+  el.innerHTML=renderSearchResult(results,'selectHotelCustomer');
+}
+
+function selectHotelCustomer(cId){
+  const c=getC(cId);const pets=DB.pets.filter(p=>pIds(cId).includes(p.id));
+  document.getElementById('h-search').value=c.name;
+  document.getElementById('h-search-result').innerHTML='';
+  document.getElementById('h-customer-info').style.display='block';
+  document.getElementById('h-customer-info').innerHTML=`
+    <div style="background:var(--g-bg);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--g-tx);font-weight:500">✅ ${c.name} · ${c.phone}</div>`;
+  document.getElementById('h-customer-info').dataset.cid=cId;
+  const sel=document.getElementById('h-pet');
+  sel.innerHTML='<option value="">-- Chọn bé --</option>'+pets.map(p=>`<option value="${p.id}" data-w="${p.weight}">${p.type}${p.name} (${p.weight||'?'}kg)</option>`).join('');
+  sel.onchange=function(){
+    const opt=this.options[this.selectedIndex];
+    if(opt.dataset.w){document.getElementById('h-weight').value=opt.dataset.w;calcHotel();}
+  };
+}
+
+async function saveHotel(){
+  const cId=document.getElementById('h-customer-info')?.dataset?.cid;
+  const ci=document.getElementById('h-checkin').value;
+  const co=document.getElementById('h-checkout').value;
+  if(!cId||!ci||!co){showToast('⚠️ Điền đủ thông tin!');return;}
+  const petId=document.getElementById('h-pet').value;
+  const pet=getP(petId);const c=getC(cId);
+  const days=Math.max(1,Math.ceil((new Date(co)-new Date(ci))/86400000));
+  const ppd=hotelPrice(parseFloat(document.getElementById('h-weight').value)||0);
+  const total=ppd*days;
+  const data={id:genId('h'),customerId:cId,petId,
+    date:ci,time:'07:00',service:'Hotel',
+    checkoutDate:co,days,pricePerDay:ppd,price:total,
+    food:document.getElementById('h-food').value,
+    notes:document.getElementById('h-notes').value,
+    status:'hotel',createdAt:today()};
+  DB.appointments.push(data);
+  await callAPI('create','appointments',{data});
+  pushNotif('🏨 Booking Hotel mới!',`${pet?.type}${pet?.name} — ${c?.name} · ${fmtD(ci)} → ${fmtD(co)}`,'hotel-new');
+  closeModal('m-new-hotel');
+  renderDashboard();
+  showToast(`✅ Đã đặt Hotel ${days} ngày · ${fmt(total)}!`);
 }
 
 // ── DASHBOARD ─────────────────────────────────────────
 function renderDashboard(){
-  const ta=DB.appointments.filter(a=>a.date===today()&&a.status==='upcoming');
+  const ta=DB.appointments.filter(a=>a.date===today()&&(a.status==='upcoming'||a.status==='hotel'));
   const rem=getReminders();
   document.getElementById('s-today').textContent=ta.length;
   document.getElementById('s-custs').textContent=DB.customers.length;
   document.getElementById('s-cards').textContent=DB.memberships.filter(m=>m.status==='active').length;
   document.getElementById('s-remind').textContent=rem.length;
   const badge=document.getElementById('bn-badge');
-  if(ta.length>0){ badge.textContent=ta.length; badge.style.display=''; }
-  else badge.style.display='none';
+  badge.textContent=ta.length;badge.className='bnav-badge'+(ta.length?' show':'');
 
-  const ael=document.getElementById('d-appts');
-  ael.innerHTML=ta.length?ta.map(a=>{
+  document.getElementById('d-appts').innerHTML=ta.length?ta.map(a=>{
     const pet=getP(a.petId);
-    return `<div class="appt" onclick="openDetail('${a.customerId}')">
+    return`<div class="appt" onclick="openDetail('${a.customerId}')">
       <div class="appt-time">${a.time}</div>
-      <div class="appt-dot"></div>
+      <div class="appt-dot${a.status==='done'?' done':''}"></div>
       <div class="appt-info">
-        <div class="appt-pet">${pet?.type||'🐾'}${pet?.name||'?'}</div>
+        <div class="appt-pet">${pet?.type||'🐾'}${pet?.name||'?'} ${a.service==='Hotel'?'<span class="hotel-badge">Hotel</span>':''}</div>
         <div class="appt-owner">${getName(a.customerId)}</div>
-        <div class="appt-svc">${a.service}</div>
+        <div class="appt-svc">${a.service==='Hotel'?`${fmtD(a.date)}→${fmtD(a.checkoutDate)} · ${fmt(a.price)}`:a.service}</div>
       </div>
-      <div class="appt-price">${fmt(a.price)}</div>
+      <div class="appt-price">${a.service!=='Hotel'?fmt(a.price):''}</div>
     </div>`;
   }).join(''):empty('📅','Chưa có ca hôm nay');
 
-  const rel=document.getElementById('d-remind');
-  rel.innerHTML=rem.slice(0,4).map(r=>`
+  const rem5=getReminders().slice(0,4);
+  document.getElementById('d-remind').innerHTML=rem5.map(r=>`
     <div class="ri-item">
       <div class="ri-icon" style="background:var(--a-bg)">${r.icon}</div>
-      <div style="flex:1"><div class="ri-title">${r.title}</div><div class="ri-meta">${r.meta}</div></div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--ink)">${r.title}</div><div style="font-size:11px;color:var(--muted)">${r.meta}</div></div>
     </div>`).join('')||empty('✅','Không có việc tồn đọng');
 }
 
 // ── CUSTOMERS ─────────────────────────────────────────
 function renderCustomers(q=''){
-  const list=DB.customers.filter(c=>!q||c.name?.toLowerCase().includes(q.toLowerCase())||c.phone?.includes(q)||
+  const list=DB.customers.filter(c=>!q||c.phone?.includes(q)||c.name?.toLowerCase().includes(q.toLowerCase())||
     DB.pets.filter(p=>pIds(c.id).includes(p.id)&&p.name?.toLowerCase().includes(q.toLowerCase())).length);
   const el=document.getElementById('cust-list');
   el.innerHTML=list.map(c=>{
@@ -775,14 +1088,16 @@ function renderCustomers(q=''){
     const done=DB.appointments.filter(a=>a.customerId==c.id&&a.status==='done');
     const last=done.sort((a,b)=>b.date?.localeCompare(a.date))[0];
     const days=last?dSince(last.date):999;
-    return `<div class="cust-row" onclick="openDetail('${c.id}')">
+    const hasCard=DB.memberships.find(m=>m.customerId==c.id&&m.status==='active');
+    return`<div class="cust-row" onclick="openDetail('${c.id}')">
       <div class="cust-avatar">${pets[0]?.type||'🐾'}</div>
       <div style="flex:1;min-width:0">
-        <div class="cust-name">${c.name}</div>
-        <div class="cust-meta">${c.phone||''}${pets.length?' · '+pets.map(p=>p.name).join(', '):''}</div>
+        <div style="font-weight:500;color:var(--ink);font-size:13px">${c.name}</div>
+        <div style="font-size:11px;color:var(--muted)">📞 ${c.phone}${pets.length?' · '+pets.map(p=>p.name).join(', '):''}</div>
       </div>
-      <div class="cust-right">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
         <span class="badge ${days<=14?'bg':days<=35?'ba':'br'}" style="font-size:10px">${last?fmtD(last.date):'Chưa spa'}</span>
+        ${hasCard?`<span class="badge bg" style="font-size:10px">${hasCard.plan}</span>`:''}
         <span style="font-size:10px;color:var(--muted)">${done.length} ca</span>
       </div>
     </div>`;
@@ -798,22 +1113,25 @@ function renderPets(q=''){
     const owner=getC(p.ownerId);
     const done=DB.appointments.filter(a=>a.petId==p.id&&a.status==='done');
     const last=done.sort((a,b)=>b.date?.localeCompare(a.date))[0];
-    return `<div class="pet-card" onclick="openDetail('${p.ownerId}')">
+    return`<div class="pet-card" onclick="openDetail('${p.ownerId}')">
       <div class="pet-card-head">
         <span style="font-size:28px">${p.type||'🐾'}</span>
-        <div>
+        <div style="flex:1">
           <div style="font-size:15px;font-weight:500;color:var(--ink)">${p.name}</div>
-          <div style="font-size:11px;color:var(--muted)">${p.breed||''} · ${p.weight||'?'}kg · ${owner?.name||'?'}</div>
+          <div style="font-size:11px;color:var(--muted)">${[p.breed,p.gender,p.weight?p.weight+'kg':'',p.color].filter(Boolean).join(' · ')}</div>
         </div>
-        <span class="badge ${dSince(last?.date)<=35?'bg':'br'}" style="margin-left:auto;font-size:10px">${last?fmtD(last.date):'Chưa spa'}</span>
+        <span class="badge ${dSince(last?.date)<=35?'bg':'br'}" style="font-size:10px">${last?fmtD(last.date):'Chưa spa'}</span>
       </div>
       <div class="pet-card-body">
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--ink-m)">👤 ${owner?.name||'?'} · 📞 ${owner?.phone||''}</div>
+        ${p.health?`<div>🏥 <span style="color:var(--ink-m)">${p.health}</span></div>`:''}
+        ${p.likes?`<div>❤️ <span style="color:var(--ink-m)">${p.likes}</span></div>`:''}
+        ${p.notes?`<div style="background:var(--pink-ll);border-radius:7px;padding:6px 9px;font-size:11px;line-height:1.5">📝 ${p.notes}</div>`:''}
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
           <span class="badge bb" style="font-size:10px">${done.length} lần spa</span>
-          <span class="badge ${dSince(p.vaccine)<=365?'bg':'ba'}" style="font-size:10px">Vắc-xin: ${p.vaccine?fmtD(p.vaccine):'?'}</span>
-          <span class="badge bp" style="font-size:10px">${p.freq||'?'}</span>
+          <span class="badge ${dSince(p.vaccine)<=365?'bg':'ba'}" style="font-size:10px">💉 ${p.vaccine?fmtD(p.vaccine):'?'}</span>
+          <span class="badge bp" style="font-size:10px">🔄 ${p.freq||'?'}</span>
         </div>
-        <div style="margin-top:6px;padding:7px 9px;background:var(--pink-ll);border-radius:8px;font-size:11px;color:var(--ink-m);line-height:1.5">${p.notes||'Không có ghi chú'}</div>
       </div>
     </div>`;
   }).join('')||empty('🐾','Không tìm thấy');
@@ -821,59 +1139,65 @@ function renderPets(q=''){
 
 // ── APPOINTMENTS ──────────────────────────────────────
 function renderAppointments(){
-  const list=DB.appointments.filter(a=>apptFilter==='all'||a.status===apptFilter)
-    .sort((a,b)=>(b.date+b.time)?.localeCompare(a.date+a.time));
-  const el=document.getElementById('appt-list');
-  el.innerHTML=list.map(a=>{
-    const pet=getP(a.petId);
-    return `<div class="appt" style="margin-bottom:8px">
+  let list=DB.appointments;
+  if(apptFilter==='hotel') list=list.filter(a=>a.service==='Hotel');
+  else if(apptFilter==='upcoming') list=list.filter(a=>a.status==='upcoming');
+  else if(apptFilter==='done') list=list.filter(a=>a.status==='done');
+  list=list.sort((a,b)=>(b.date+b.time)?.localeCompare(a.date+a.time));
+  document.getElementById('appt-list').innerHTML=list.map(a=>{
+    const pet=getP(a.petId);const isHotel=a.service==='Hotel';
+    return`<div class="appt">
       <div>
         <div class="appt-time">${a.time}</div>
         <div style="font-size:10px;color:var(--muted)">${fmtD(a.date)}</div>
       </div>
       <div class="appt-dot ${a.status==='done'?'done':''}"></div>
       <div class="appt-info">
-        <div class="appt-pet">${pet?.type||'🐾'}${pet?.name||'?'}</div>
+        <div class="appt-pet">${pet?.type||'🐾'}${pet?.name||'?'} ${isHotel?'<span class="hotel-badge">Hotel</span>':''}</div>
         <div class="appt-owner">${getName(a.customerId)}</div>
-        <div class="appt-svc">${a.service} · ${fmt(a.price)}</div>
+        <div class="appt-svc">${isHotel?`${fmtD(a.date)}→${fmtD(a.checkoutDate)} · ${a.days}ng`:a.service} · ${fmt(a.price)}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
         ${sbadge(a.status)}
         ${a.status==='upcoming'?`<button class="btn btn-outline btn-sm" onclick="markDone('${a.id}')">✅</button>`:''}
       </div>
     </div>`;
   }).join('')||empty('📅','Không có lịch');
 }
-function fAppts(f,el){ apptFilter=f; document.querySelectorAll('#p-appointments .tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderAppointments(); }
+function fAppts(f,el){apptFilter=f;document.querySelectorAll('#p-appointments .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAppointments();}
 async function markDone(id){
-  const a=DB.appointments.find(x=>x.id==id); if(!a) return;
-  a.status='done'; renderAppointments(); renderDashboard();
+  const a=DB.appointments.find(x=>x.id==id);if(!a)return;
+  a.status='done';renderAppointments();renderDashboard();
   await callAPI('update','appointments',{id,updates:{status:'done'}});
-  showToast('✅ Đã hoàn thành ca spa');
+  showToast('✅ Đã hoàn thành ca');
 }
 
 // ── REMINDERS ─────────────────────────────────────────
 function getReminders(){
   const rem=[],now=new Date();
-  const tmrw=new Date(now); tmrw.setDate(now.getDate()+1); const tmrwS=tmrw.toISOString().slice(0,10);
-  const yest=new Date(now); yest.setDate(now.getDate()-1); const yestS=yest.toISOString().slice(0,10);
-
+  const tmrw=new Date(now);tmrw.setDate(now.getDate()+1);const tmrwS=tmrw.toISOString().slice(0,10);
+  const yest=new Date(now);yest.setDate(now.getDate()-1);const yestS=yest.toISOString().slice(0,10);
   DB.appointments.filter(a=>a.date===tmrwS&&a.status==='upcoming').forEach(a=>{
-    const pet=getP(a.petId); const owner=getC(a.customerId);
-    rem.push({type:'tomorrow',icon:'📱',title:`Nhắc lịch: ${pet?.type}${pet?.name} — ${a.time}`,
-      meta:`${owner?.name} · ${owner?.phone}`,ownerName:owner?.name,petName:pet?.name,time:a.time});
+    const pet=getP(a.petId);const owner=getC(a.customerId);
+    rem.push({type:'tomorrow',icon:'📱',title:`Nhắc lịch: ${pet?.type}${pet?.name} — ${a.time}`,meta:`${owner?.name} · ${owner?.phone}`,ownerName:owner?.name,petName:pet?.name,time:a.time});
   });
   DB.appointments.filter(a=>a.date===yestS&&a.status==='done').forEach(a=>{
-    const pet=getP(a.petId); const owner=getC(a.customerId);
-    rem.push({type:'followup',icon:'💌',title:`Follow-up: ${pet?.type}${pet?.name}`,
-      meta:`${owner?.name} · ${owner?.phone}`,ownerName:owner?.name,petName:pet?.name});
+    const pet=getP(a.petId);const owner=getC(a.customerId);
+    rem.push({type:'followup',icon:'💌',title:`Follow-up: ${pet?.type}${pet?.name}`,meta:`${owner?.name} · ${owner?.phone}`,ownerName:owner?.name,petName:pet?.name});
   });
   DB.customers.forEach(c=>{
     const last=DB.appointments.filter(a=>a.customerId==c.id&&a.status==='done').sort((a,b)=>b.date?.localeCompare(a.date))[0];
     if(last&&dSince(last.date)>=35){
       const pets=DB.pets.filter(p=>pIds(c.id).includes(p.id));
-      rem.push({type:'overdue',icon:'🔁',title:`${pets.map(p=>p.type+p.name).join(', ')} — ${dSince(last.date)} ngày`,
-        meta:`${c.name} · ${c.phone}`,ownerName:c.name,petName:pets.map(p=>p.name).join(', ')});
+      rem.push({type:'overdue',icon:'🔁',title:`${pets.map(p=>p.type+p.name).join(', ')} — ${dSince(last.date)} ngày`,meta:`${c.name} · ${c.phone}`,ownerName:c.name,petName:pets.map(p=>p.name).join(', ')});
+    }
+  });
+  // Hotel ending soon
+  DB.appointments.filter(a=>a.service==='Hotel'&&a.status==='hotel').forEach(a=>{
+    const days=Math.ceil((new Date(a.checkoutDate)-new Date())/(86400000));
+    if(days<=1&&days>=0){
+      const pet=getP(a.petId);const owner=getC(a.customerId);
+      rem.push({type:'hotel-end',icon:'🏨',title:`Hotel kết thúc ${days===0?'hôm nay':'ngày mai'}: ${pet?.type}${pet?.name}`,meta:`${owner?.name} · ${owner?.phone}`,ownerName:owner?.name,petName:pet?.name});
     }
   });
   return rem;
@@ -884,49 +1208,44 @@ function renderReminders(){
   const r1=rem.filter(r=>r.type==='tomorrow');
   const r2=rem.filter(r=>r.type==='followup');
   const r3=rem.filter(r=>r.type==='overdue');
-  document.getElementById('rc1').textContent=r1.length;
-  document.getElementById('rc2').textContent=r2.length;
-  document.getElementById('rc3').textContent=r3.length;
-  const renderList=(list,id)=>{
-    document.getElementById(id).innerHTML=list.length?list.map(r=>`
+  const r4=rem.filter(r=>r.type==='hotel-end');
+  [['rc1',r1,'rl1'],['rc2',r2,'rl2'],['rc3',r3,'rl3'],['rc4',r4,'rl4']].forEach(([cid,list,lid])=>{
+    document.getElementById(cid).textContent=list.length;
+    document.getElementById(lid).innerHTML=list.length?list.map(r=>`
       <div class="ri-item">
         <div class="ri-icon" style="background:var(--a-bg)">${r.icon}</div>
-        <div style="flex:1"><div class="ri-title">${r.title}</div><div class="ri-meta">${r.meta}</div></div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--ink)">${r.title}</div><div style="font-size:11px;color:var(--muted)">${r.meta}</div></div>
         <button class="btn btn-outline btn-sm" onclick="copyZalo(getZScript('${r.type}','${(r.ownerName||'').replace(/'/g,"\\'")}','${(r.petName||'').replace(/'/g,"\\'")}','${r.time||''}'))">Zalo</button>
       </div>`).join(''):empty('✅','Không có');
-  };
-  renderList(r1,'rl1'); renderList(r2,'rl2'); renderList(r3,'rl3');
+  });
 }
 
 function getZScript(type,owner,pet,time){
   const s={
     tomorrow:`Dạ chị ${owner} ơi! Mayo nhắc nhẹ lịch spa của bé ${pet} ngày mai lúc ${time} nha ạ 🐾`,
     followup:`Chào chị ${owner}! Bé ${pet} về nhà khỏe không ạ? 🐾 Hôm qua bé ngoan lắm, hẹn gặp lại!`,
-    overdue:`Dạ chị ${owner} ơi, lâu rồi chưa thấy bé ${pet} ghé Mayo 🐾 Chị muốn đặt lịch spa không ạ?`
+    overdue:`Dạ chị ${owner} ơi, lâu rồi chưa thấy bé ${pet} ghé Mayo 🐾 Chị muốn đặt lịch spa không ạ?`,
+    'hotel-end':`Dạ chị ${owner} ơi! Nhắc nhẹ bé ${pet} đang ở Hotel Mayo — ngày mai là ngày trả bé nha ạ 🏨🐾`
   };
   return s[type]||'';
 }
-
-function copyZalo(text){
-  navigator.clipboard.writeText(text).then(()=>showToast('✅ Đã copy! Dán vào Zalo')).catch(()=>{prompt('Copy:',text)});
-}
+function copyZalo(text){navigator.clipboard.writeText(text).then(()=>showToast('✅ Đã copy! Dán vào Zalo')).catch(()=>{prompt('Copy:',text)});}
 
 // ── FOLLOW-UP ─────────────────────────────────────────
 function renderFollowup(){
   const done=DB.appointments.filter(a=>a.status==='done').sort((a,b)=>b.date?.localeCompare(a.date)).slice(0,6);
-  const el=document.getElementById('fu-list');
-  el.innerHTML=done.map(a=>{
-    const pet=getP(a.petId); const owner=getC(a.customerId); const days=dSince(a.date);
+  document.getElementById('fu-list').innerHTML=done.map(a=>{
+    const pet=getP(a.petId);const owner=getC(a.customerId);const days=dSince(a.date);
     const script=getZScript('followup',owner?.name,pet?.name,'');
-    return `<div class="fu-card">
+    return`<div class="fu-card">
       <div class="fu-head">
         <span style="font-size:13px;font-weight:500">${pet?.type}${pet?.name} · ${owner?.name}</span>
         <span class="badge ${days===0?'br':days===1?'ba':'bb'}">${days===0?'Hôm nay':days===1?'Hôm qua':days+'ngày'}</span>
       </div>
       <div class="fu-body">
         <div class="fu-script">${script}</div>
-        <div class="fu-actions">
-          <button class="btn btn-outline btn-sm" style="flex:1" onclick="copyZalo('${script.replace(/'/g,"\\'")}')">📋 Copy Zalo</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="copyZalo('${script.replace(/'/g,"\\'")}')">📋 Copy</button>
           <button class="btn btn-primary btn-sm" style="flex:1" onclick="openModal('m-new-appt')">📅 Đặt lịch</button>
         </div>
       </div>
@@ -935,28 +1254,17 @@ function renderFollowup(){
 }
 
 // ── MEMBERSHIP ────────────────────────────────────────
-function renderMembership(){
-  const el=document.getElementById('mem-list');
-  el.innerHTML=DB.memberships.map(m=>{
-    const owner=getC(m.customerId); const pet=getP(m.petId);
-    const used=Number(m.used||0); const total=Number(m.sessions||1);
-    const rem=total-used; const pct=Math.round(used/total*100);
-    return `<div class="mem-card">
-      <span style="font-size:28px">${pet?.type||'🐾'}</span>
-      <div class="mem-info">
-        <div class="mem-name">${owner?.name||'?'}</div>
-        <div class="mem-plan">${pet?.name||'?'} · ${m.plan}</div>
-        <div class="mem-progress"><div class="mem-bar" style="width:${pct}%"></div></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">Đã dùng ${used}/${total} ca</div>
-      </div>
-      <div class="mem-right">
-        <span class="badge ${m.status==='active'?'bg':'br'}">${m.status==='active'?'Đang chạy':'Dừng'}</span>
-        <div style="font-size:11px;color:var(--rose);margin-top:4px;font-weight:500">${fmt(m.fee)}/tháng</div>
-      </div>
-    </div>`;
-  }).join('')||empty('🎴','Chưa có thẻ nào');
-  document.getElementById('m-cust').innerHTML='<option value="">--</option>'+DB.customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  updMFee(); document.getElementById('m-start').value=today();
+function searchForMember(q){
+  const el=document.getElementById('mem-search-result');
+  if(!q||q.length<2){el.innerHTML='';memberSelectedCustId=null;return;}
+  const results=searchCustomers(q);
+  el.innerHTML=renderSearchResult(results,'selectMemberCustomer');
+}
+
+function selectMemberCustomer(cId){
+  memberSelectedCustId=cId;const c=getC(cId);
+  document.getElementById('mem-search').value=c.name;
+  document.getElementById('mem-search-result').innerHTML=`<div style="background:var(--g-bg);border-radius:8px;padding:8px 11px;margin-bottom:10px;font-size:12px;color:var(--g-tx)">✅ ${c.name} · ${c.phone}</div>`;
 }
 
 function updMFee(){
@@ -965,11 +1273,46 @@ function updMFee(){
   document.getElementById('m-fee').value=Number(p[1]).toLocaleString('vi-VN')+'đ';
 }
 
+function renderMembership(){
+  document.getElementById('mem-list').innerHTML=DB.memberships.map(m=>{
+    const owner=getC(m.customerId);const pet=getP(m.petId);
+    const used=Number(m.used||0),total=Number(m.sessions||1),rem=total-used;
+    return`<div class="mem-card">
+      <span style="font-size:26px">${pet?.type||'🐾'}</span>
+      <div class="mem-info">
+        <div class="mem-name">${owner?.name||'?'}</div>
+        <div class="mem-plan">${pet?.name||'?'} · ${m.plan}</div>
+        <div class="mem-progress"><div class="mem-bar" style="width:${Math.round(used/total*100)}%"></div></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">Đã dùng ${used}/${total} ca</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <span class="badge ${m.status==='active'?'bg':'br'}">${m.status==='active'?'Chạy':'Dừng'}</span>
+        <div style="font-size:11px;color:var(--rose);margin-top:4px;font-weight:500">${fmt(m.fee)}/tháng</div>
+        <div style="font-size:10px;color:var(--muted)">${rem} ca còn</div>
+      </div>
+    </div>`;
+  }).join('')||empty('🎴','Chưa có thẻ nào');
+  updMFee();document.getElementById('m-start').value=today();
+}
+
+async function saveMember(){
+  if(!memberSelectedCustId){showToast('⚠️ Chọn khách hàng!');return;}
+  const start=document.getElementById('m-start').value;
+  if(!start){showToast('⚠️ Chọn ngày đăng ký!');return;}
+  const plan=document.getElementById('m-plan').value.split('|');
+  const data={id:genId('m'),customerId:memberSelectedCustId,
+    plan:plan[0],fee:parseInt(plan[1]),sessions:parseInt(plan[2]),
+    used:0,startDate:start,status:'active',createdAt:today()};
+  DB.memberships.push(data);
+  await callAPI('create','memberships',{data});
+  closeModal('m-new-member');renderMembership();
+  showToast('✅ Đã đăng ký thẻ!');
+}
+
 // ── REVENUE ───────────────────────────────────────────
 function renderRevenue(){
-  const done=DB.appointments.filter(a=>a.status==='done');
-  const now=new Date();
-  const wk=new Date(now); wk.setDate(now.getDate()-now.getDay());
+  const done=DB.appointments.filter(a=>a.status==='done'||a.status==='hotel');
+  const now=new Date();const wk=new Date(now);wk.setDate(now.getDate()-now.getDay());
   const sum=arr=>arr.reduce((s,a)=>s+Number(a.price||0),0);
   document.getElementById('rv-today').textContent=fmt(sum(done.filter(a=>a.date===today())));
   document.getElementById('rv-month').textContent=fmt(sum(done.filter(a=>a.date?.slice(0,7)===today().slice(0,7))));
@@ -977,54 +1320,61 @@ function renderRevenue(){
   document.getElementById('rv-avg').textContent=done.length?fmt(Math.round(sum(done)/done.length)):'0đ';
   document.getElementById('rv-tbody').innerHTML=[...done].reverse().slice(0,20).map(a=>{
     const pet=getP(a.petId);
-    return `<tr><td>${fmtD(a.date)}</td><td>${pet?.type}${pet?.name||'?'}</td><td>${a.service}</td><td style="font-weight:600;color:var(--rose)">${fmt(a.price)}</td></tr>`;
+    return`<tr><td>${fmtD(a.date)}</td><td>${pet?.type}${pet?.name||'?'}</td><td style="font-size:11px">${a.service==='Hotel'?'🏨 Hotel':a.service}</td><td style="font-weight:600;color:var(--rose)">${fmt(a.price)}</td></tr>`;
   }).join('')||`<tr><td colspan="4">${empty('💰','Chưa có')}</td></tr>`;
 }
 
 // ── DETAIL ────────────────────────────────────────────
 function openDetail(cId){
-  const c=getC(cId); if(!c) return;
+  const c=getC(cId);if(!c)return;
   const pets=DB.pets.filter(p=>pIds(cId).includes(p.id));
   const appts=DB.appointments.filter(a=>a.customerId==cId).sort((a,b)=>b.date?.localeCompare(a.date));
   const done=appts.filter(a=>a.status==='done');
-  const totalSpend=done.reduce((s,a)=>s+Number(a.price||0),0);
+  const total=done.reduce((s,a)=>s+Number(a.price||0),0);
   const member=DB.memberships.find(m=>m.customerId==cId&&m.status==='active');
-
   document.getElementById('detail-title').textContent=c.name;
   document.getElementById('detail-body').innerHTML=`
-    <div class="detail-hero">
-      <div class="detail-avatar">${pets[0]?.type||'🐾'}</div>
-      <div style="flex:1;min-width:0">
+    <div style="background:linear-gradient(135deg,var(--pink-ll),var(--cream-d));border-radius:14px;padding:14px;display:flex;gap:12px;margin-bottom:14px;border:1px solid var(--bd)">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--pink-l);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${pets[0]?.type||'🐾'}</div>
+      <div style="flex:1">
         <div style="font-size:17px;font-weight:600;color:var(--ink)">${c.name}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px">📞 ${c.phone}</div>
-        <div style="font-size:12px;color:var(--muted)">📍 ${c.addr||'—'}</div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+        <div style="font-size:12px;color:var(--muted)">📞 ${c.phone}${c.zalo&&c.zalo!==c.phone?' · 💬 '+c.zalo:''}</div>
+        <div style="font-size:12px;color:var(--muted)">📍 ${c.addr||'—'} · ${c.source||''}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px">
           <span class="badge bb">${done.length} ca spa</span>
-          <span class="badge bp">${fmt(totalSpend)}</span>
+          <span class="badge bp">${fmt(total)}</span>
           ${member?`<span class="badge bg">${member.plan}</span>`:''}
         </div>
       </div>
     </div>
     ${pets.map(p=>`
-    <div style="background:var(--pink-ll);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+    <div style="background:var(--pink-ll);border-radius:12px;padding:12px 13px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <span style="font-size:24px">${p.type}</span>
-        <div><div style="font-weight:500;font-size:14px;color:var(--ink)">${p.name}</div>
-        <div style="font-size:11px;color:var(--muted)">${p.breed||''} · ${p.age||''} · ${p.weight||'?'}kg · ${p.color||''}</div></div>
+        <span style="font-size:26px">${p.type}</span>
+        <div>
+          <div style="font-weight:500;font-size:14px;color:var(--ink)">${p.name}</div>
+          <div style="font-size:11px;color:var(--muted)">${[p.breed,p.gender,p.weight?p.weight+'kg':'',p.color,p.age].filter(Boolean).join(' · ')}</div>
+        </div>
       </div>
-      <div style="background:white;border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink-m);line-height:1.5">${p.notes||'Không có ghi chú'}</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
-        <span class="badge bb" style="font-size:10px">${p.freq}</span>
-        <span class="badge ${dSince(p.vaccine)<=365?'bg':'ba'}" style="font-size:10px">Vắc-xin: ${p.vaccine?fmtD(p.vaccine):'?'}</span>
+      ${p.health?`<div style="font-size:12px;margin-bottom:4px">🏥 <strong>Sức khỏe:</strong> ${p.health}</div>`:''}
+      ${p.likes?`<div style="font-size:12px;margin-bottom:4px">❤️ <strong>Sở thích:</strong> ${p.likes}</div>`:''}
+      ${p.notes?`<div style="background:white;border-radius:8px;padding:7px 9px;font-size:11px;color:var(--ink-m);line-height:1.5;margin-bottom:6px">📝 ${p.notes}</div>`:''}
+      ${p.special?`<div style="background:var(--a-bg);border-radius:8px;padding:7px 9px;font-size:11px;color:var(--a-tx);margin-bottom:6px">⚠️ ${p.special}</div>`:''}
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge bb" style="font-size:10px">${p.freq||'?'}</span>
+        <span class="badge ${dSince(p.vaccine)<=365?'bg':'ba'}" style="font-size:10px">💉 ${p.vaccine?fmtD(p.vaccine):'Chưa rõ'}</span>
       </div>
     </div>`).join('')}
-    <div class="sec-title">Lịch sử spa (${done.length} lần · ${fmt(totalSpend)})</div>
-    ${done.slice(0,5).map(a=>`
+    <div class="sec-title">Lịch sử spa & hotel (${appts.filter(a=>a.status!=='upcoming').length} lần)</div>
+    ${appts.filter(a=>a.status!=='upcoming').slice(0,6).map(a=>`
       <div class="history-item">
         <div class="history-date">${fmtD(a.date)}</div>
-        <div class="history-body"><div class="history-svc">${getP(a.petId)?.type}${getP(a.petId)?.name} · ${a.service}</div><div class="history-detail">${a.groomer||''}</div></div>
+        <div class="history-body">
+          <div class="history-svc">${getP(a.petId)?.type}${getP(a.petId)?.name} · ${a.service==='Hotel'?'🏨 Hotel':a.service}</div>
+          <div class="history-detail">${a.service==='Hotel'?`${a.days} ngày`:a.groomer||''}</div>
+        </div>
         <div class="history-price">${fmt(a.price)}</div>
-      </div>`).join('')||'<div style="color:var(--muted);font-size:13px">Chưa có lịch sử</div>'}
+      </div>`).join('')||'<div style="color:var(--muted);font-size:13px;padding:8px 0">Chưa có lịch sử</div>'}
     ${appts.filter(a=>a.status==='upcoming').length?`
     <div class="sec-title" style="margin-top:12px">Lịch sắp tới</div>
     ${appts.filter(a=>a.status==='upcoming').map(a=>`
@@ -1033,100 +1383,6 @@ function openDetail(cId){
         <div class="appt-info"><div class="appt-pet">${fmtD(a.date)}</div><div class="appt-svc">${a.service}</div></div>
         ${sbadge(a.status)}</div>`).join('')}`:''}`;
   openModal('m-detail');
-}
-
-// ── MODALS ────────────────────────────────────────────
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='m-new-appt'){
-    const s=document.getElementById('a-cust');
-    s.innerHTML='<option value="">-- Chọn khách --</option>'+DB.customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-    document.getElementById('a-date').value=today();
-    autoPrice();
-  }
-  if(id==='m-new-member'){
-    document.getElementById('m-cust').innerHTML='<option value="">--</option>'+DB.customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-    document.getElementById('m-start').value=today();
-    updMFee();
-  }
-}
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function closeOut(e,el){ if(e.target===el) el.classList.remove('open'); }
-
-function loadPets(cId){
-  const s=document.getElementById('a-pet');
-  const list=DB.pets.filter(p=>pIds(cId).includes(p.id));
-  s.innerHTML='<option value="">-- Chọn bé --</option>'+list.map(p=>`<option value="${p.id}">${p.type}${p.name}</option>`).join('');
-}
-function autoPrice(){ const s=document.getElementById('a-svc'); if(s) document.getElementById('a-price').value=s.options[s.selectedIndex]?.dataset?.p||0; }
-
-// ── SAVE ──────────────────────────────────────────────
-async function saveCustomer(){
-  const name=document.getElementById('c-name').value.trim();
-  const phone=document.getElementById('c-phone').value.trim();
-  if(!name||!phone){ showToast('⚠️ Nhập tên và SĐT!'); return; }
-  const btn=document.getElementById('save-cust-btn');
-  btn.disabled=true; btn.textContent='Đang lưu...';
-  const cId='c'+Date.now().toString(36);
-  const pName=document.getElementById('p-name').value.trim();
-  let petId=null;
-  if(pName){
-    petId='p'+Date.now().toString(36);
-    const pd={id:petId,ownerId:cId,name:pName,type:document.getElementById('p-type').value,
-      breed:document.getElementById('p-breed').value,age:document.getElementById('p-age').value,
-      weight:document.getElementById('p-weight').value,color:document.getElementById('p-color').value,
-      notes:document.getElementById('p-notes').value,vaccine:document.getElementById('p-vax').value,
-      freq:document.getElementById('p-freq').value};
-    DB.pets.push(pd);
-    await callAPI('create','pets',{data:pd});
-  }
-  const cd={id:cId,name,phone,zalo:document.getElementById('c-zalo').value,
-    addr:document.getElementById('c-addr').value,source:document.getElementById('c-src').value,
-    createdAt:today(),pets:JSON.stringify(petId?[petId]:[])};
-  DB.customers.push({...cd,pets:petId?[petId]:[]});
-  await callAPI('create','customers',{data:cd});
-  btn.disabled=false; btn.textContent='💾 Lưu';
-  closeModal('m-new-cust');
-  renderCustomers();
-  renderDashboard();
-  showToast(`✅ Đã thêm ${name}${pName?' & bé '+pName:''}!`);
-}
-
-async function saveAppt(){
-  const cId=document.getElementById('a-cust').value;
-  const date=document.getElementById('a-date').value;
-  if(!cId||!date){ showToast('⚠️ Chọn khách và ngày!'); return; }
-  const btn=document.getElementById('save-appt-btn');
-  btn.disabled=true; btn.textContent='Đang lưu...';
-  const data={id:'a'+Date.now().toString(36),customerId:cId,
-    petId:document.getElementById('a-pet').value,date,
-    time:document.getElementById('a-time').value,
-    service:document.getElementById('a-svc').value,
-    price:parseInt(document.getElementById('a-price').value)||0,
-    groomer:document.getElementById('a-groomer').value,
-    notes:document.getElementById('a-notes').value,
-    status:'upcoming',createdAt:today()};
-  DB.appointments.push(data);
-  await callAPI('create','appointments',{data});
-  btn.disabled=false; btn.textContent='📅 Xác nhận';
-  closeModal('m-new-appt');
-  renderDashboard();
-  showToast(`✅ Đã đặt lịch ${date} lúc ${data.time}!`);
-}
-
-async function saveMember(){
-  const cId=document.getElementById('m-cust').value;
-  const start=document.getElementById('m-start').value;
-  if(!cId||!start){ showToast('⚠️ Điền đủ thông tin!'); return; }
-  const plan=document.getElementById('m-plan').value.split('|');
-  const data={id:'m'+Date.now().toString(36),customerId:cId,
-    plan:plan[0],fee:parseInt(plan[1]),sessions:parseInt(plan[2]),
-    used:0,startDate:start,status:'active',createdAt:today()};
-  DB.memberships.push(data);
-  await callAPI('create','memberships',{data});
-  closeModal('m-new-member');
-  renderMembership();
-  showToast('✅ Đã đăng ký thẻ!');
 }
 </script>
 </body>
