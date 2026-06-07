@@ -356,89 +356,131 @@ tr:last-child td{border-bottom:none}
 </div>
 <div id="more-overlay" style="display:none;position:fixed;inset:0;z-index:190" onclick="closeMore()"></div>
 
-<!-- ═══════════════════════════════════════════
-     MODAL: ĐẶT LỊCH SPA (tích hợp tạo khách mới)
-════════════════════════════════════════════ -->
+<!-- MODAL: ĐẶT LỊCH SPA -->
 <div class="modal-overlay" id="m-new-appt" onclick="closeOut(event,this)">
 <div class="modal">
   <span class="modal-handle"></span>
   <div class="modal-header">
-    <span class="modal-title" id="appt-modal-title">📅 Đặt lịch Spa</span>
+    <span class="modal-title">📅 Đặt lịch Spa</span>
     <button class="modal-close" onclick="closeModal('m-new-appt')">✕</button>
   </div>
+
+  <!-- STEP BAR -->
+  <div style="display:flex;align-items:center;gap:0;padding:10px 18px;border-bottom:1px solid var(--bd);background:var(--cream)">
+    <div id="sb1" style="display:flex;align-items:center;gap:6px;flex:1">
+      <div id="sn1" style="width:22px;height:22px;border-radius:50%;background:var(--red);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+      <span id="sl1" style="font-size:11px;font-weight:500;color:var(--red)">Khách hàng</span>
+    </div>
+    <div style="flex:0 0 20px;height:1px;background:var(--bd)"></div>
+    <div id="sb2" style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
+      <div id="sn2" style="width:22px;height:22px;border-radius:50%;background:var(--bd);color:var(--muted);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+      <span id="sl2" style="font-size:11px;font-weight:500;color:var(--muted)">Dịch vụ</span>
+    </div>
+    <div style="flex:0 0 20px;height:1px;background:var(--bd)"></div>
+    <div id="sb3" style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end">
+      <div id="sn3" style="width:22px;height:22px;border-radius:50%;background:var(--bd);color:var(--muted);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+      <span id="sl3" style="font-size:11px;font-weight:500;color:var(--muted)">Xác nhận</span>
+    </div>
+  </div>
+
   <div class="modal-body">
-    <!-- Step indicator -->
-    <div class="step-indicator">
-      <div class="step-dot active" id="st1">1</div>
-      <div class="step-line" id="sl1"></div>
-      <div class="step-dot" id="st2">2</div>
-      <div class="step-line" id="sl2"></div>
-      <div class="step-dot" id="st3">3</div>
-      <span style="font-size:11px;color:var(--muted);margin-left:6px" id="step-label">Tìm khách</span>
-    </div>
 
-    <!-- STEP 1: Tìm / tạo khách -->
+    <!-- ══ STEP 1: KHÁCH HÀNG ══ -->
     <div id="appt-step1">
+
+      <!-- Tìm kiếm -->
       <div class="form-group">
-        <label class="form-label">Tìm khách theo SĐT hoặc tên</label>
-        <input class="form-input" id="appt-search" placeholder="Nhập số điện thoại hoặc tên..." oninput="searchForAppt(this.value)" type="tel" inputmode="text">
-        <div class="form-hint">Nhập SĐT để tìm khách cũ. Không có kết quả → tạo mới</div>
+        <label class="form-label">🔍 Tìm khách theo SĐT hoặc tên</label>
+        <input class="form-input" id="appt-search"
+          placeholder="Nhập SĐT hoặc tên khách..."
+          oninput="searchForAppt(this.value)"
+          type="text" inputmode="tel" autocomplete="off">
+        <div class="form-hint">Nhập để tìm khách cũ — hoặc nhấn "Thêm khách mới" bên dưới</div>
       </div>
-      <div id="appt-search-result" style="display:none"></div>
+
+      <!-- Kết quả tìm kiếm -->
+      <div id="appt-search-result"></div>
+
+      <!-- Khách đã chọn -->
       <div id="appt-selected-customer" style="display:none"></div>
-      <!-- New customer form (collapsed by default) -->
-      <div id="new-cust-form" style="display:none">
-        <div style="background:var(--g-bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--g-tx);font-weight:500">✨ Tạo khách hàng mới</div>
-        <div class="form-group"><label class="form-label">Họ và tên *</label><input class="form-input" id="nc-name" placeholder="Nguyễn Thị A"></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">SĐT *</label><input class="form-input" id="nc-phone" placeholder="0901..." type="tel"></div>
-          <div class="form-group"><label class="form-label">Zalo</label><input class="form-input" id="nc-zalo" placeholder="090..."></div>
+
+      <!-- Nút thêm khách mới -->
+      <div id="appt-new-btn-wrap">
+        <button class="btn btn-outline btn-full" onclick="toggleNewCustForm()" id="toggle-new-cust-btn"
+          style="border-style:dashed;color:var(--rose);border-color:var(--pink);gap:6px">
+          ➕ Thêm khách hàng mới
+        </button>
+      </div>
+
+      <!-- Form khách mới — ẩn mặc định -->
+      <div id="new-cust-form" style="display:none;margin-top:12px">
+        <div style="background:var(--g-bg);border-radius:10px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">✨</span>
+          <span style="font-size:12px;color:var(--g-tx);font-weight:600">Tạo khách hàng mới — lưu vào hệ thống ngay</span>
         </div>
-        <div class="form-group"><label class="form-label">Địa chỉ</label><input class="form-input" id="nc-addr"></div>
-        <div class="form-group"><label class="form-label">Biết Mayo qua</label>
-          <select class="form-select" id="nc-src"><option>Facebook</option><option>Zalo</option><option>Người quen</option><option>Đi ngang</option><option>Google Maps</option><option>TikTok</option></select>
-        </div>
-        <div class="sec-title">Thú cưng</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Tên bé *</label><input class="form-input" id="nc-pname"></div>
-          <div class="form-group"><label class="form-label">Loài</label>
-            <select class="form-select" id="nc-ptype"><option value="🐶">🐶 Chó</option><option value="🐱">🐱 Mèo</option></select>
+
+        <div style="background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:13px 14px;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">👤 Chủ nhân</div>
+          <div class="form-group"><label class="form-label">Họ và tên *</label><input class="form-input" id="nc-name" placeholder="Nguyễn Thị A"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Số điện thoại *</label><input class="form-input" id="nc-phone" placeholder="0901234567" type="tel"></div>
+            <div class="form-group"><label class="form-label">Zalo (nếu khác)</label><input class="form-input" id="nc-zalo" placeholder="090..."></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Địa chỉ</label><input class="form-input" id="nc-addr" placeholder="Phường, Quận..."></div>
+            <div class="form-group"><label class="form-label">Biết Mayo qua</label>
+              <select class="form-select" id="nc-src">
+                <option>Facebook</option><option>Zalo</option><option>Người quen</option>
+                <option>Đi ngang</option><option>Google Maps</option><option>TikTok</option>
+              </select>
+            </div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Giống</label><input class="form-input" id="nc-pbreed"></div>
-          <div class="form-group"><label class="form-label">Cân nặng (kg)</label><input class="form-input" id="nc-pwt" type="number" step="0.1"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Tuổi</label><input class="form-input" id="nc-page"></div>
-          <div class="form-group"><label class="form-label">Giới tính</label>
-            <select class="form-select" id="nc-pgender"><option>Đực</option><option>Cái</option></select>
+
+        <div style="background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:13px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🐾 Thú cưng</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Tên bé *</label><input class="form-input" id="nc-pname" placeholder="Mochi, Luna..."></div>
+            <div class="form-group"><label class="form-label">Loài</label>
+              <select class="form-select" id="nc-ptype"><option value="🐶">🐶 Chó</option><option value="🐱">🐱 Mèo</option></select>
+            </div>
           </div>
-        </div>
-        <div class="form-group"><label class="form-label">Màu lông</label><input class="form-input" id="nc-pcolor"></div>
-        <div class="form-group"><label class="form-label">Tính cách / Lưu ý groomer</label>
-          <textarea class="form-textarea" id="nc-pnotes" placeholder="Hiền / nhát / hay cắn..."></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Tiêm phòng</label><input class="form-input" id="nc-pvax" type="date"></div>
-          <div class="form-group"><label class="form-label">Tần suất spa</label>
-            <select class="form-select" id="nc-pfreq"><option>Hàng tuần</option><option>2 tuần 1 lần</option><option>Hàng tháng</option><option>Không đều</option></select>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Giống</label><input class="form-input" id="nc-pbreed" placeholder="Poodle, Shih Tzu..."></div>
+            <div class="form-group"><label class="form-label">Cân nặng (kg)</label><input class="form-input" id="nc-pwt" type="number" step="0.1" placeholder="3.5"></div>
           </div>
-        </div>
-        <div class="form-group"><label class="form-label">Sở thích / Yêu thích</label>
-          <input class="form-input" id="nc-plikes" placeholder="Thích chơi bóng, thích ăn gà, thích được vuốt...">
-        </div>
-        <div class="form-group"><label class="form-label">Tình trạng sức khỏe</label>
-          <input class="form-input" id="nc-phealth" placeholder="Khỏe mạnh / Dị ứng X / Tiểu đường...">
-        </div>
-        <div class="form-group"><label class="form-label">Ghi chú đặc biệt</label>
-          <textarea class="form-textarea" id="nc-pspecial" placeholder="Thông tin quan trọng khác..."></textarea>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Tuổi</label><input class="form-input" id="nc-page" placeholder="2 tuổi"></div>
+            <div class="form-group"><label class="form-label">Giới tính</label>
+              <select class="form-select" id="nc-pgender"><option>Đực</option><option>Cái</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Màu lông</label><input class="form-input" id="nc-pcolor" placeholder="Trắng, vàng..."></div>
+          <div class="form-group"><label class="form-label">Tính cách / Lưu ý groomer</label>
+            <textarea class="form-textarea" id="nc-pnotes" placeholder="Hiền / nhát / hay cắn / dị ứng với..." style="min-height:60px"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Tiêm phòng gần nhất</label><input class="form-input" id="nc-pvax" type="date"></div>
+            <div class="form-group"><label class="form-label">Tần suất spa</label>
+              <select class="form-select" id="nc-pfreq">
+                <option>Hàng tuần</option><option>2 tuần 1 lần</option><option>Hàng tháng</option><option>Không đều</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Sở thích</label><input class="form-input" id="nc-plikes" placeholder="Thích chơi bóng, thích ăn gà..."></div>
+          <div class="form-group"><label class="form-label">Tình trạng sức khỏe</label><input class="form-input" id="nc-phealth" placeholder="Khỏe mạnh / Dị ứng X..."></div>
+          <div class="form-group"><label class="form-label">Ghi chú đặc biệt</label>
+            <textarea class="form-textarea" id="nc-pspecial" placeholder="Thông tin quan trọng khác..." style="min-height:56px"></textarea>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- STEP 2: Chi tiết lịch -->
+    <!-- ══ STEP 2: DỊCH VỤ ══ -->
     <div id="appt-step2" style="display:none">
+      <!-- Khách đã chọn — hiển thị lại ở step 2 -->
+      <div id="appt-step2-customer" style="margin-bottom:14px"></div>
+
       <div class="form-group"><label class="form-label">Thú cưng</label>
         <select class="form-select" id="a-pet"><option value="">-- Chọn bé --</option></select>
       </div>
@@ -455,11 +497,11 @@ tr:last-child td{border-bottom:none}
       </div>
       <div class="form-group"><label class="form-label">Dịch vụ *</label>
         <select class="form-select" id="a-svc" onchange="autoPrice()">
-          <option value="Refresh" data-p="80000">Refresh — Tắm vệ sinh cơ bản</option>
-          <option value="Groom" data-p="150000">Groom — Tắm + tỉa + vệ sinh đầy đủ</option>
-          <option value="Studio Full" data-p="280000">Studio Full — Full grooming + ảnh</option>
-          <option value="Cắt móng + vệ sinh tai" data-p="25000">Cắt móng + vệ sinh tai</option>
-          <option value="Nhuộm màu Ombre" data-p="100000">Nhuộm màu Ombre</option>
+          <option value="Refresh" data-p="80000">🛁 Refresh — Tắm vệ sinh cơ bản</option>
+          <option value="Groom" data-p="150000">✂️ Groom — Tắm + tỉa + vệ sinh đầy đủ</option>
+          <option value="Studio Full" data-p="280000">⭐ Studio Full — Full grooming + ảnh</option>
+          <option value="Cắt móng + vệ sinh tai" data-p="25000">💅 Cắt móng + vệ sinh tai</option>
+          <option value="Nhuộm màu Ombre" data-p="100000">🎨 Nhuộm màu Ombre</option>
         </select>
       </div>
       <div class="form-row">
@@ -473,13 +515,18 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
 
-    <!-- STEP 3: Xác nhận -->
+    <!-- ══ STEP 3: XÁC NHẬN ══ -->
     <div id="appt-step3" style="display:none">
-      <div id="appt-confirm-box" style="background:var(--pink-ll);border-radius:12px;padding:14px;font-size:13px;line-height:1.8"></div>
+      <div style="text-align:center;font-size:40px;margin-bottom:12px">📋</div>
+      <div id="appt-confirm-box" style="background:var(--pink-ll);border-radius:14px;padding:16px;font-size:13px;line-height:2"></div>
+      <div style="margin-top:12px;background:var(--a-bg);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--a-tx)">
+        📱 Thông báo sẽ được gửi ngay sau khi xác nhận
+      </div>
     </div>
   </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline" style="flex:1" id="appt-btn-back" onclick="apptBack()" style="display:none">← Quay lại</button>
+
+  <div class="modal-footer" style="gap:8px">
+    <button class="btn btn-outline" style="flex:1;display:none" id="appt-btn-back" onclick="apptBack()">← Quay lại</button>
     <button class="btn btn-primary" style="flex:2" id="appt-btn-next" onclick="apptNext()">Tiếp theo →</button>
   </div>
 </div>
@@ -787,33 +834,65 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 function closeOut(e,el){if(e.target===el)el.classList.remove('open');}
 
 function initApptWizard(){
-  apptStep=1;selectedCustomerId=null;isNewCustomer=false;
-  document.getElementById('appt-search').value='';
-  document.getElementById('appt-search-result').style.display='none';
+  apptStep=1; selectedCustomerId=null; isNewCustomer=false;
+  // Reset fields
+  ['appt-search','nc-name','nc-phone','nc-zalo','nc-addr','nc-pname','nc-pbreed','nc-pwt','nc-page','nc-pcolor','nc-pnotes','nc-pvax','nc-plikes','nc-phealth','nc-pspecial','a-notes'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('appt-search-result').innerHTML='';
   document.getElementById('appt-selected-customer').style.display='none';
+  document.getElementById('appt-selected-customer').innerHTML='';
   document.getElementById('new-cust-form').style.display='none';
+  document.getElementById('appt-new-btn-wrap').style.display='block';
+  document.getElementById('toggle-new-cust-btn').textContent='➕ Thêm khách hàng mới';
   document.getElementById('appt-step1').style.display='block';
   document.getElementById('appt-step2').style.display='none';
   document.getElementById('appt-step3').style.display='none';
-  document.getElementById('appt-btn-back').style.display='none';
   document.getElementById('a-date').value=today();
   autoPrice();
   updateStepUI();
 }
 
 function updateStepUI(){
+  // Step numbers
   [1,2,3].forEach(i=>{
-    const d=document.getElementById('st'+i);
-    d.className='step-dot'+(i===apptStep?' active':i<apptStep?' done':'');
+    const sn=document.getElementById('sn'+i);
+    const sl=document.getElementById('sl'+i);
+    if(!sn||!sl) return;
+    if(i<apptStep){
+      sn.style.background='var(--g-bg)'; sn.style.color='var(--g-tx)'; sn.textContent='✓';
+      sl.style.color='var(--g-tx)';
+    } else if(i===apptStep){
+      sn.style.background='var(--red)'; sn.style.color='white'; sn.textContent=String(i);
+      sl.style.color='var(--red)'; sl.style.fontWeight='600';
+    } else {
+      sn.style.background='var(--bd)'; sn.style.color='var(--muted)'; sn.textContent=String(i);
+      sl.style.color='var(--muted)'; sl.style.fontWeight='500';
+    }
   });
-  [1,2].forEach(i=>{
-    const l=document.getElementById('sl'+i);
-    if(l) l.className='step-line'+(i<apptStep?' done':'');
-  });
-  const labels={1:'Tìm khách',2:'Chi tiết lịch',3:'Xác nhận'};
-  document.getElementById('step-label').textContent=labels[apptStep];
   document.getElementById('appt-btn-back').style.display=apptStep>1?'flex':'none';
   document.getElementById('appt-btn-next').textContent=apptStep===3?'✅ Xác nhận đặt lịch':'Tiếp theo →';
+}
+
+function toggleNewCustForm(){
+  const form=document.getElementById('new-cust-form');
+  const btn=document.getElementById('toggle-new-cust-btn');
+  const open=form.style.display==='none';
+  form.style.display=open?'block':'none';
+  btn.textContent=open?'✕ Đóng form':'➕ Thêm khách hàng mới';
+  if(open){
+    // Clear selected customer
+    selectedCustomerId=null;
+    document.getElementById('appt-selected-customer').style.display='none';
+    document.getElementById('appt-selected-customer').innerHTML='';
+    document.getElementById('appt-search').value='';
+    document.getElementById('appt-search-result').innerHTML='';
+    isNewCustomer=true;
+    // scroll to form
+    setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'start'}),100);
+  } else {
+    isNewCustomer=false;
+  }
 }
 
 function searchForAppt(q){
@@ -839,23 +918,37 @@ function showNewCustForm(phone=''){
 }
 
 function selectApptCustomer(cId){
-  selectedCustomerId=cId;isNewCustomer=false;
+  selectedCustomerId=cId; isNewCustomer=false;
   const c=getC(cId);
   const pets=DB.pets.filter(p=>pIds(cId).includes(p.id));
-  document.getElementById('appt-selected-customer').style.display='block';
-  document.getElementById('appt-selected-customer').innerHTML=`
-    <div style="background:var(--g-bg);border-radius:10px;padding:10px 13px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:22px">${pets[0]?.type||'🐾'}</span>
-      <div style="flex:1"><div style="font-weight:500;color:var(--ink)">${c.name}</div><div style="font-size:11px;color:var(--muted)">📞 ${c.phone}</div></div>
-      <button class="btn btn-ghost btn-sm" onclick="clearApptCustomer()">✕</button>
+  const lastAppt=DB.appointments.filter(a=>a.customerId==cId&&a.status==='done').sort((a,b)=>b.date?.localeCompare(a.date))[0];
+  const customerCard=`
+    <div style="background:var(--g-bg);border:1px solid #BBF7D0;border-radius:12px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:26px">${pets[0]?.type||'🐾'}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;color:var(--ink);font-size:14px">${c.name}</div>
+          <div style="font-size:12px;color:var(--muted)">📞 ${c.phone}</div>
+          ${pets.length?`<div style="font-size:11px;color:var(--muted);margin-top:2px">🐾 ${pets.map(p=>p.type+p.name+'('+p.weight+'kg)').join(' · ')}</div>`:''}
+          ${lastAppt?`<div style="font-size:11px;color:var(--g-tx);margin-top:2px">✓ Spa gần nhất: ${fmtD(lastAppt.date)}</div>`:''}
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearApptCustomer()" style="color:var(--muted)">✕</button>
+      </div>
     </div>`;
-  document.getElementById('appt-search-result').style.display='none';
+  document.getElementById('appt-selected-customer').style.display='block';
+  document.getElementById('appt-selected-customer').innerHTML=customerCard;
+  document.getElementById('appt-search-result').innerHTML='';
+  document.getElementById('appt-search').value='';
+  // Hide new customer form if open
   document.getElementById('new-cust-form').style.display='none';
+  document.getElementById('toggle-new-cust-btn').textContent='➕ Thêm khách hàng mới';
+  isNewCustomer=false;
 }
 
 function clearApptCustomer(){
-  selectedCustomerId=null;isNewCustomer=false;
+  selectedCustomerId=null; isNewCustomer=false;
   document.getElementById('appt-selected-customer').style.display='none';
+  document.getElementById('appt-selected-customer').innerHTML='';
   document.getElementById('appt-search').value='';
 }
 
@@ -898,8 +991,15 @@ async function apptNext(){
       selectedCustomerId=cId;
       showToast(`✅ Đã lưu khách ${name}!`);
     }
-    // Load pets for step 2
+    // Load pets + customer preview for step 2
     loadPetsForAppt(selectedCustomerId);
+    const c2=getC(selectedCustomerId);
+    const pets2=DB.pets.filter(p=>pIds(selectedCustomerId).includes(p.id));
+    document.getElementById('appt-step2-customer').innerHTML=`
+      <div style="background:var(--pink-ll);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">${pets2[0]?.type||'🐾'}</span>
+        <div><div style="font-weight:500;font-size:13px;color:var(--ink)">${c2?.name}</div><div style="font-size:11px;color:var(--muted)">📞 ${c2?.phone}</div></div>
+      </div>`;
     apptStep=2;
     document.getElementById('appt-step1').style.display='none';
     document.getElementById('appt-step2').style.display='block';
